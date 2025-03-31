@@ -39,6 +39,7 @@ export default function Main() {
                 >
                     <Text
                         fontSize={logoFontSize}
+                        color="white"
                     >
                         InstanTrip
                     </Text>
@@ -51,6 +52,7 @@ export default function Main() {
                 >
                     <Text
                         fontSize={loginFontSize}
+                        color="white"
                     >
                         로그인 | 회원가입
                     </Text>
@@ -67,11 +69,13 @@ export default function Main() {
                     >
                         <Text
                             fontSize={mainFontSize}
+                            color="white"
                         >
                             당신의 여행을 더욱 편하게
                         </Text>
                         <Text
                             fontSize={subFontSize}
+                            color="white"
                         >
                             여행 만들러 가기 ⏵
                         </Text>
