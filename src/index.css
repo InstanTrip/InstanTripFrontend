@@ -66,3 +66,30 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* 캘린더 크기와 색상 */
+:root {
+  --rdp-cell-size: 50px;
+  --rdp-accent-color: #333333;
+  --rdp-background-color: #e7edff;
+  --rdp-outline: 2px solid var(--rdp-accent-color);
+  --rdp-outline-selected: 2px solid #dbdbdb;
+}
+
+/* 기본 캘린더 */
+.rdp {
+  font-size: 16px;
+}
+
+/* 선택된 날짜 */
+.rdp-day_selected {
+  background-color: var(--rdp-accent-color) !important;
+  color: white !important;
+  border-radius: 8px;
+}
+
+/* 선택할 수 없는 날짜 */
+.rdp-day_disabled {
+  color: #999 !important;
+  text-decoration: line-through;
+}
