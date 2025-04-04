@@ -2,6 +2,8 @@ import { useState, useEffect, React } from "react"
 import { Box, Flex, Text, Table, Checkbox, Pagination, ButtonGroup, IconButton, NativeSelect } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
 
+import NotFoundSchedule from "./NotFoundSchedule";
+
 export default function Schedule() {
     // 선택된 여행들 아이디 값
     const [selection, setSelection] = useState<number[]>([]);
@@ -100,213 +102,221 @@ export default function Schedule() {
     }, [nowPage])
 
     return (
-        <Flex
-            w="100%"
-            h="100vh"
-
-            py="20px"
-            px="50px"
-
-            alignItems="center"
-            direction="column"
-
-            className="light"
-        >
-
-            {/* 상단바 */}
-            <Flex
-                px="30px"
-                h="90px"
-
-                w="100%"
-                
-                justifyContent="space-between"
-                alignItems="center"
-            >
-                <Flex
-                    alignItems="center"
-                    gap="40px"
-                >
-                    {/* 선택 삭제 버튼 */}
+        <>
+            {
+                items.length > 0 ? (
                     <Flex
-                        w="126px"
-                        h="40px"
+                        w="100%"
+                        h="100vh"
+
+                        py="20px"
+                        px="50px"
+
+                        alignItems="center"
+                        direction="column"
+
+                        className="light"
+                    >
                     
-                        bgColor="#FFDFDF"
-                        borderRadius="5px"
-
-                        justifyContent="center"
-                        alignItems="center"
-
-                        transition="all 0.2s ease-in-out"
-                        cursor="pointer"
-
-                        _hover={{
-                            bgColor: "#FFCACA",
-                        }}
-                    >
-                        <Text
-                            color="#F06E6E"
-                            fontSize="16px"
-                        >
-                            선택 삭제
-                        </Text>
-                    </Flex>
-
-                    <Text
-                        fontWeight="lighter"
-                    >
-                        {`${selection.length}개 선택됨`}
-                    </Text>
-                </Flex>
-
-                <Flex
-                    gap="50px"
-                    h="100%"
-                >
-                    <Flex
-                        h="100%"
-                        alignItems="center"
-
-                        gap="70px"
-                    >
-                        <Text
-                            fontSize="20px"
-                            whiteSpace="nowrap"
-                        >
-                            표시:
-                        </Text>
-
-                        <NativeSelect.Root variant="plain">
-                            <NativeSelect.Field
-                                outline="none"
-                                value={tripListCount}
-                                onChange={(e) => {
-                                    setTripListCount(Number(e.target.value));
-                                }}
-                                fontSize="20px"
-                            >
-                                {
-                                    tripListPageSizeList.map((count) => (
-                                        <option key={count} value={count}>
-                                            {count}
-                                        </option>
-                                    ))
-                                }
-                            </NativeSelect.Field>
-                            <NativeSelect.Indicator />
-                        </NativeSelect.Root>
-                    </Flex>
-
-                    <Flex
-                        h="100%"
-                        alignItems="center"
-                    >
-                        <Text
-                            fontSize="20px"
-                            
-                        >
-                            총 {items.length}
-                        </Text>
-                    </Flex>
-                </Flex>
-            </Flex>
-
-            <Table.ScrollArea
-                h="100%"
-                w="100%"
-            >
-                <Table.Root
-                    fontWeight="lighter"
-                    stickyHeader
-                >
-                    {/* 헤더 */}
-                    <Table.Header>
-                        <Table.Row
+                        {/* 상단바 */}
+                        <Flex
+                            px="30px"
                             h="90px"
-                            bgColor="#EFEFEF"
-                            fontSize="20px"
+
+                            w="100%"
+
+                            justifyContent="space-between"
+                            alignItems="center"
                         >
-                            <Table.ColumnHeader w="6" pl="40px">
-                                <Checkbox.Root
-                                    size="sm"
-                                    top="0.5"
-                                    aria-label="Select all rows"
-                                    checked={indeterminate ? "indeterminate" : selection.length > 0}
-                                    onCheckedChange={(changes) => {
-                                        setSelection (
-                                            changes.checked ? items.slice((nowPage - 1) * tripListCount, Math.min(nowPage * tripListCount, items.length)).map((item) => item.id) : [],
-                                        )
+                            <Flex
+                                alignItems="center"
+                                gap="40px"
+                            >
+                                {/* 선택 삭제 버튼 */}
+                                <Flex
+                                    w="126px"
+                                    h="40px"
+
+                                    bgColor="#FFDFDF"
+                                    borderRadius="5px"
+
+                                    justifyContent="center"
+                                    alignItems="center"
+
+                                    transition="all 0.2s ease-in-out"
+                                    cursor="pointer"
+
+                                    _hover={{
+                                        bgColor: "#FFCACA",
                                     }}
                                 >
-                                    <Checkbox.HiddenInput />
-                                    <Checkbox.Control />
-                                </Checkbox.Root>
-                            </Table.ColumnHeader>
-
-                            <Table.ColumnHeader>여행지</Table.ColumnHeader>
-                            <Table.ColumnHeader>취향 태그</Table.ColumnHeader>
-                            <Table.ColumnHeader textAlign="end">시작 날짜</Table.ColumnHeader>
-                            <Table.ColumnHeader textAlign="end" pr="40px">끝 날짜</Table.ColumnHeader>
-                        </Table.Row>
-                    </Table.Header>
-                    {/* 메인 데이터 공간 */}
-                    <Table.Body>{rows}</Table.Body>
-                </Table.Root>
-            </Table.ScrollArea>
-
-            {/* 페이지네이션 */}
-            <Pagination.Root
-                count={items.length}
-                pageSize={tripListCount}
-                page={nowPage}
-                onPageChange={(e) => {setNowPage(e.page)}}
-
-                mt="30px"
-            >
-                <ButtonGroup variant="ghost" size="sm" wrap="wrap">
-
-                    {/* 왼쪽 아이콘 */}
-                    <Pagination.PrevTrigger asChild>
-                        <IconButton
-                            outline="none"
-                            border="0"
-                            bgColor="transparent"
-                        >
-                            <LuChevronLeft
-                                color="#696969"
-                            />
-                        </IconButton>
-                    </Pagination.PrevTrigger>
-
-                    <Pagination.Items
-                        render={(page) => (
-                            <IconButton
-                                variant={{ base: "ghost" }}
-                                color="#696969"
-                                outline="none"
-                                border={page.value !== nowPage ? "1px solid #E0E7EE" : "0"}
-                                bgColor={page.value === nowPage ? "#E0E7EE" : "transparent"}
+                                    <Text
+                                        color="#F06E6E"
+                                        fontSize="16px"
+                                    >
+                                        선택 삭제
+                                    </Text>
+                                </Flex>
+                                
+                                <Text
+                                    fontWeight="lighter"
+                                >
+                                    {`${selection.length}개 선택됨`}
+                                </Text>
+                            </Flex>
+                                
+                            <Flex
+                                gap="50px"
+                                h="100%"
                             >
-                                {page.value}
-                            </IconButton>
-                        )}
-                    />
-                    
-                    {/* 오른쪽 아이콘 */}
-                    <Pagination.NextTrigger asChild>
-                        <IconButton
-                            outline="none"
-                            border="0"
-                            bgColor="transparent"
+                                <Flex
+                                    h="100%"
+                                    alignItems="center"
+                                
+                                    gap="70px"
+                                >
+                                    <Text
+                                        fontSize="20px"
+                                        whiteSpace="nowrap"
+                                    >
+                                        표시:
+                                    </Text>
+                                
+                                    <NativeSelect.Root variant="plain">
+                                        <NativeSelect.Field
+                                            outline="none"
+                                            value={tripListCount}
+                                            onChange={(e) => {
+                                                setTripListCount(Number(e.target.value));
+                                            }}
+                                            fontSize="20px"
+                                        >
+                                            {
+                                                tripListPageSizeList.map((count) => (
+                                                    <option key={count} value={count}>
+                                                        {count}
+                                                    </option>
+                                                ))
+                                            }
+                                        </NativeSelect.Field>
+                                        <NativeSelect.Indicator />
+                                    </NativeSelect.Root>
+                                </Flex>
+                                        
+                                <Flex
+                                    h="100%"
+                                    alignItems="center"
+                                >
+                                    <Text
+                                        fontSize="20px"
+                                        
+                                    >
+                                        총 {items.length}
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                        </Flex>
+                                        
+                        <Table.ScrollArea
+                            h="100%"
+                            w="100%"
                         >
-                            <LuChevronRight
-                                color="#696969"
-                            />
-                        </IconButton>
-                    </Pagination.NextTrigger>
-                </ButtonGroup>
-            </Pagination.Root>
-        </Flex>
+                            <Table.Root
+                                fontWeight="lighter"
+                                stickyHeader
+                            >
+                                {/* 헤더 */}
+                                <Table.Header>
+                                    <Table.Row
+                                        h="90px"
+                                        bgColor="#EFEFEF"
+                                        fontSize="20px"
+                                    >
+                                        <Table.ColumnHeader w="6" pl="40px">
+                                            <Checkbox.Root
+                                                size="sm"
+                                                top="0.5"
+                                                aria-label="Select all rows"
+                                                checked={indeterminate ? "indeterminate" : selection.length > 0}
+                                                onCheckedChange={(changes) => {
+                                                    setSelection (
+                                                        changes.checked ? items.slice((nowPage - 1) * tripListCount, Math.min(nowPage * tripListCount, items.length)).map((item) => item.id) : [],
+                                                    )
+                                                }}
+                                            >
+                                                <Checkbox.HiddenInput />
+                                                <Checkbox.Control />
+                                            </Checkbox.Root>
+                                        </Table.ColumnHeader>
+                                            
+                                        <Table.ColumnHeader>여행지</Table.ColumnHeader>
+                                        <Table.ColumnHeader>취향 태그</Table.ColumnHeader>
+                                        <Table.ColumnHeader textAlign="end">시작 날짜</Table.ColumnHeader>
+                                        <Table.ColumnHeader textAlign="end" pr="40px">끝 날짜</Table.ColumnHeader>
+                                    </Table.Row>
+                                </Table.Header>
+                                {/* 메인 데이터 공간 */}
+                                <Table.Body>{rows}</Table.Body>
+                            </Table.Root>
+                        </Table.ScrollArea>
+                                            
+                        {/* 페이지네이션 */}
+                        <Pagination.Root
+                            count={items.length}
+                            pageSize={tripListCount}
+                            page={nowPage}
+                            onPageChange={(e) => {setNowPage(e.page)}}
+                                            
+                            mt="30px"
+                        >
+                            <ButtonGroup variant="ghost" size="sm" wrap="wrap">
+                                            
+                                {/* 왼쪽 아이콘 */}
+                                <Pagination.PrevTrigger asChild>
+                                    <IconButton
+                                        outline="none"
+                                        border="0"
+                                        bgColor="transparent"
+                                    >
+                                        <LuChevronLeft
+                                            color="#696969"
+                                        />
+                                    </IconButton>
+                                </Pagination.PrevTrigger>
+                                            
+                                <Pagination.Items
+                                    render={(page) => (
+                                        <IconButton
+                                            variant={{ base: "ghost" }}
+                                            color="#696969"
+                                            outline="none"
+                                            border={page.value !== nowPage ? "1px solid #E0E7EE" : "0"}
+                                            bgColor={page.value === nowPage ? "#E0E7EE" : "transparent"}
+                                        >
+                                            {page.value}
+                                        </IconButton>
+                                    )}
+                                />
+
+                                {/* 오른쪽 아이콘 */}
+                                <Pagination.NextTrigger asChild>
+                                    <IconButton
+                                        outline="none"
+                                        border="0"
+                                        bgColor="transparent"
+                                    >
+                                        <LuChevronRight
+                                            color="#696969"
+                                        />
+                                    </IconButton>
+                                </Pagination.NextTrigger>
+                            </ButtonGroup>
+                        </Pagination.Root>
+                    </Flex>
+                ) : (
+                    <NotFoundSchedule />
+                )
+            }
+        </>
     );
 }

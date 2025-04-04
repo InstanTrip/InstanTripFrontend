@@ -1,5 +1,5 @@
 import { Flex, Box, Text, useBreakpointValue } from "@chakra-ui/react";
-import Background from "../images/background.webp";
+import Background from "../assets/background.webp";
 
 export default function Main() {
     // 반응형 디자인을 위한 세부 조정

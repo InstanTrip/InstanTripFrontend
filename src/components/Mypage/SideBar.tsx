@@ -1,9 +1,9 @@
 import { Box, Flex, Image, Link, Text } from "@chakra-ui/react";
 
 import RippleButton from "../Misc/RippleButton";
-import task_list_icon from "../../images/task_list_icon.svg";
-import setting_icon from "../../images/setting_icon.svg";
-import logout_icom from "../../images/logout_icon.svg";
+import task_list_icon from "../../assets/task_list_icon.svg";
+import setting_icon from "../../assets/setting_icon.svg";
+import logout_icom from "../../assets/logout_icon.svg";
 
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
     return (

@@ -1,5 +1,5 @@
 import { Flex, Text, Image } from '@chakra-ui/react';
-import checkmark from '../../images/checkmark.svg';
+import checkmark from '../../assets/checkmark.svg';
 
 export default function StatusBar({ count }: { count: number }) {
   // 반복되는 스텝 컴포넌트를 위한 함수 생성
