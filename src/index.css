@@ -57,7 +57,21 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #F4F4F4;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* 다크모드 지정 상태에서도 라이트모드 강제화를 위해 추가함 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #213547;
+    background-color: #F4F4F4;
   }
   a:hover {
     color: #747bff;

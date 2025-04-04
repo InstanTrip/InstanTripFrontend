@@ -10,16 +10,14 @@ const Calender = () => {
   const [range, setRange] = useState<DateRange | undefined>(undefined);
 
   return (
-    <div>
-      <DayPicker
-        locale={ko}
-        mode="range"
-        defaultMonth={today} // 현재 날짜가 속한 월을 디폴트로 설정
-        selected={range}
-        onSelect={setRange}
-        disabled={{ before: today }} 
-      />
-    </div>
+    <DayPicker
+      locale={ko}
+      mode="range"
+      defaultMonth={today} // 현재 날짜가 속한 월을 디폴트로 설정
+      selected={range}
+      onSelect={setRange}
+      disabled={{ before: today }} 
+    />
   );
 };
 
