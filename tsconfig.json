@@ -7,6 +7,9 @@
   "compilerOptions": {
     "types": [
       "kakao.maps.d.ts"
-    ]
+    ],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "allowJs": true,
+    "declaration": true
   }
 }

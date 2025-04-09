@@ -1609,6 +1609,11 @@ ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+animejs@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/animejs/-/animejs-4.0.0.tgz"
+  integrity sha512-JHFkhTvH+hYAljDNH7V0qLWDvF/vDvcFB5RoTKjjzLc7JKBSHwMFBobUmXvblwzWqpDqe500q4lnk9/sNRWTzw==
+
 ansi-styles@^4.1.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz"
@@ -2487,6 +2492,11 @@ run-parallel@^1.1.9:
   integrity sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==
   dependencies:
     queue-microtask "^1.2.2"
+
+sakura-js@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/sakura-js/-/sakura-js-1.1.1.tgz#c932a6a5857537ad6dc7131cbbfec1844194dace"
+  integrity sha512-JWTK9RauYrZoDMymmuXRH+fFdqh9uJqZUdy0bUbt001w6N9QO82+gpTGoTtwDn+KROnffQIMTfQOvG8t9GwQDw==
 
 scheduler@^0.25.0:
   version "0.25.0"

@@ -1,4 +1,5 @@
 import { Flex, Box, Text, useBreakpointValue } from "@chakra-ui/react";
+
 import Background from "../assets/background.webp";
 
 export default function Main() {
@@ -22,7 +23,7 @@ export default function Main() {
     const subFontSize: string = useBreakpointValue({ base: "18px", md: "25px" }) as string;
     const leftMargin: string = useBreakpointValue({ base: "30px", md: "100px" }) as string;
     const textBoxGap: string = useBreakpointValue({ base: "25px", md: "45px" }) as string;
-
+    
     return (
         <Flex w="100vw" h="100vh" >
             <Box w="100vw" h="100vh"

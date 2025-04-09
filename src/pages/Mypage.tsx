@@ -4,6 +4,7 @@ import { Flex, Text, Link, Box, Image } from '@chakra-ui/react';
 
 import SideBar from '@/components/Mypage/SideBar';
 import Schedule from '@/components/Mypage/Schedule';
+import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
 
 export default function Mypage() {
     const [page, setPage] = useState("schedule"); // schedule, user_info_edit
@@ -32,6 +33,7 @@ export default function Mypage() {
                         </Box>
                     ) : page === "user_info_edit" ? (
                         <Box>
+                            <ChangeUserInfo />
                         </Box>
                     ) : (
                         // 404 에러 페이지
