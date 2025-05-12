@@ -5,6 +5,7 @@ import StatusBar from '@/components/TripSetting/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';
 import Calender from '@/components/TripSetting/Calender';
 import Area from '@/components/TripSetting/Area';
+import Taste from '@/components/TripSetting/Taste';
 
 export default function TripSetting() {
     // 이 페이지는 여행 일정 만들기 초기 설정 페이지임
@@ -35,8 +36,8 @@ export default function TripSetting() {
                 w="100%"
                 h="40px"
                 justifyContent="center"
-                mt="80px"
-                border="1px solid red"
+                mt="10px"
+                // border="1px solid red"
             >
                 <StatusBar count={page} />
             </Flex>
@@ -53,10 +54,10 @@ export default function TripSetting() {
 
             {page === 1 && (
                 <>
-                    <Text color="#575757" mt="30px">
+                    <Text color="#575757" mt="30px" fontSize="20px">
                         여행 기간 선택
                     </Text>
-                    <Box mt="20px">
+                    <Box mt="100px">
                         <Calender />
                     </Box>
                 </>
@@ -64,10 +65,10 @@ export default function TripSetting() {
 
             {page === 2 && (
                 <>
-                    <Text color="#575757" mt="30px">
+                    <Text color="#575757" mt="30px" fontSize="20px">
                         떠나고 싶은 지역
                     </Text>
-                    <Box mt="20px">
+                    <Box mt="100px">
                         <Area />
                     </Box>
                 </>
@@ -76,26 +77,35 @@ export default function TripSetting() {
             {/* 다음 버튼 */}
             {page < 3 && (
                 <Button
-                    mt="40px"
-                    colorScheme="blue"
-                    fontSize="18px"
+                    mt="80px"
+                    fontSize="20px"
+                    backgroundColor="#F4F4F4"
+                    color="#575757"
                     onClick={handleNextPage}
                 >
-                    다음 ⏵
+                    다음⏵
                 </Button>
             )}
 
             {/* 마지막 페이지임 */}
             {page === 3 && (
-                <Button
-                    mt="40px"
-                    colorScheme="green"
-                    fontSize="18px"
-                >
-                    일정 생성 ⏵
-                </Button>
+                <>
+                    <Text color="#575757" mt="30px" fontSize="20px">
+                        취향 선택
+                    </Text>
+                    <Box mt="30px">
+                        <Taste />
+                    </Box>
+                    <Button
+                        mt="80px"
+                        fontSize="20px"
+                        backgroundColor="#F4F4F4"
+                        color="#575757"
+                    >
+                        여행 일정 생성하기⏵
+                    </Button>
+                </>
             )}
-
         </Flex>
     );
 }

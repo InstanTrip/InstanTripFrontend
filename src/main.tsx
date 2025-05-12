@@ -9,6 +9,7 @@ import './index.css'
 import Main from './pages/Main';
 import TripSetting from './pages/TripSetting';
 import Mypage from './pages/Mypage';
+import ShowTrip from './pages/ShowTrip';
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient();
@@ -28,6 +29,9 @@ createRoot(document.getElementById('root')!).render(
 
             {/* 마이페이지 */}
             <Route path="/mypage" element={<Mypage />} />
+            
+            {/* 여행 출력 */}
+            <Route path="/showtrip" element={<ShowTrip />} />
           </Routes>
         </Router>
       </Provider>
