@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useKakaoLoader } from 'react-kakao-maps-sdk';
+import axios from 'axios';
+
 
 declare global {
     interface Window {
@@ -11,7 +13,20 @@ interface Coordinate {
     lat: number;
     lng: number;
 }
-  
+
+const fetchRouteData = async (loc_data: string) => {
+  if (!loc_data?.trim()) return [];
+
+  const header = {
+    headers: {
+      Authorization: `KakaoAK aca67f7366d77ae20257384b7de569bf`,
+    }
+  }
+
+  const response = await axios.get(`https://apis-navi.kakaomobility.com/v1/waypoints/directions`, loc_data, header);
+  return response.data;
+};
+
 const KakaoRoute = () => {
     const [routeCoords, setRouteCoords] = useState<Coordinate[] | null>(null);
   
@@ -20,6 +35,8 @@ const KakaoRoute = () => {
       const fetchRoute = async () => {
         try {
           const response = await fetch("https://");
+
+
           const data = await response.json();
           setRouteCoords(data.route); // 서버에서 받은 좌표 데이터 설정    
         } catch (err) {
