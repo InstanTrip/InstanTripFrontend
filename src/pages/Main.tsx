@@ -1,4 +1,4 @@
-import { Flex, Box, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, Box, Text, Link, useBreakpointValue } from "@chakra-ui/react";
 
 import Background from "../assets/background.webp";
 
@@ -74,12 +74,24 @@ export default function Main() {
                         >
                             당신의 여행을 더욱 편하게
                         </Text>
-                        <Text
-                            fontSize={subFontSize}
-                            color="white"
-                        >
-                            여행 만들러 가기 ⏵
-                        </Text>
+                        <Box>
+                            <Link
+                                fontSize={subFontSize}
+                                color="white"
+        
+                                textDecoration="none"
+                                href="/create"
+        
+                                _hover={{
+                                    textDecoration: "none",
+                                    color: "white",
+                                }}
+                            
+                                outline="none"
+                            >
+                                여행 만들러 가기 ⏵
+                            </Link>
+                        </Box>
                     </Flex>
                 </Flex>
             </Box>

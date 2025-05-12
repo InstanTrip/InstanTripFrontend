@@ -8,22 +8,21 @@ interface Coordinate {
   lng: number;
 }
 
-
 interface origin {
-  x: number;
-  y: number;
+  x: string;
+  y: string;
   angle: number;
 }
 
 interface destination {
-  x: number;
-  y: number;
+  x: string;
+  y: string;
 }
 
 interface waypoints {
   name: string;
-  x: number;
-  y: number;
+  x: string;
+  y: string;
 }
 
 interface MobilityQuery {
@@ -48,7 +47,7 @@ const fetchRouteData = async (loc_data: MobilityQuery) => {
   }
 
   const response = await axios.post(`https://apis-navi.kakaomobility.com/v1/waypoints/directions`, loc_data, header);
-  return response.data;
+  return response.data.routes[0].sections;
 };
 
 export default function MapBox({ locationData }: { locationData: number[][] }) {
@@ -72,34 +71,48 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
       // 카카오 모빌리티에서 가져오기
       setReqQuery({
         origin: {
-          x: locationData[0][0],
-          y: locationData[0][1],
-          angle: 0,
+          x: String(locationData[0][1]),
+          y: String(locationData[0][0]),
+          angle: 270,
         },
         destination: {
-          x: locationData[locationData.length - 1][0],
-          y: locationData[locationData.length - 1][1],
+          x: String(locationData[locationData.length - 1][1]),
+          y: String(locationData[locationData.length - 1][0]),
         },
         waypoints: locationData.slice(1, -1).map((loc, index) => ({
           name: `Waypoint ${index + 1}`,
-          x: loc[0],
-          y: loc[1],
+          x: String(loc[1]),
+          y: String(loc[0]),
         })),
-        priority: "fastest",
-        car_fuel: "gasoline",
+        priority: "RECOMMEND",
+        car_fuel: "GASOLINE",
         car_hipass: false,
         alternatives: false,
         road_details: false,
-        summary: true,
+        summary: false,
       });
 
       refetchRouteData();
-      // setPath(locationData.map((loc) => ({ lat: loc[0], lng: loc[1] })))
     }
   }, [ locationData, refetchRouteData ]);
 
   useEffect(() => {
-    console.log("results", results);
+    if (results) {
+      const linepath: Array<Coordinate> = []
+      for (const section of results) {
+        for (const road of section.roads) {
+          for (let i = 0; i < road.vertexes.length; i++) {
+            if (i % 2 === 0) {
+              linepath.push({
+                lat: road.vertexes[i + 1],
+                lng: road.vertexes[i],
+              });
+            }
+          }
+        }
+      }
+      setPath(linepath);
+    }
   }, [ results ]);
 
   return (
@@ -107,13 +120,13 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
       id="map"
       center={{
         // 지도의 중심좌표
-        lat: 33.450701,
-        lng: 126.570667,
+        lat: 36.1460625,
+        lng: 128.3934375,
       }}
       style={{
         // 지도의 크기
-        width: "600px",
-        height: "350px",
+        width: "100%",
+        height: "100%",
       }}
       level={3} // 지도의 확대 레벨
     >
@@ -121,9 +134,9 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
         path={[
           path
         ]}
-        strokeWeight={5} // 선의 두께 입니다
-        strokeColor={"#FFAE00"} // 선의 색깔입니다
-        strokeOpacity={0.7} // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeWeight={4} // 선의 두께 입니다
+        strokeColor={"red"} // 선의 색깔입니다
+        strokeOpacity={0.5} // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
         strokeStyle={"solid"} // 선의 스타일입니다
       />
     </Map>
