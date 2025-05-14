@@ -4,22 +4,32 @@ import { Box, Flex, Text, Image, Input, useBreakpointValue } from "@chakra-ui/re
 
 import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
+import Loop from "@/assets/icon_loop.svg";
 import TestImg from "@/assets/testimage.jpg";
 
 import MapBox from "@/components/Map/MapBox";
 
+import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
+
 export default function AboutTrip() {
+    // 지도에 표시할 장소 데이터
+    // [위도, 경도] 형식의 배열로 저장
     const [ locationData, setLocationData ] = useState<number[][]>([
         [36.1460625, 128.3934375],
         [36.140882020156, 128.419129591913],
         [36.1284582, 128.3307228]
     ]);
 
-    const [ date, setDate ] = useState<Date>(new Date("2025-10-01"));
-
+    
+    // 장소 변경 모달창 관련 변수
     const [ locChangeModalIsOpen, setLocChangeModalIsOpen ] = useState(false);
     const [ locChangeModalSearch, setLocChangeModalSearch ] = useState("");
-
+    
+    // 일정 공유 모달창 관련 변수
+    const [ accessModalIsOpen, setAccessModalIsOpen ] = useState(false);
+    
+    // 날짜 관련 변수
+    const [ date, setDate ] = useState<Date>(new Date("2025-10-01"));
     const dayUp = () => {
         const newDate = new Date(date);
         newDate.setDate(newDate.getDate() + 1);
@@ -35,10 +45,12 @@ export default function AboutTrip() {
         // 모달창 띄워서 새 장소 받음, 모달창 띄우는 코드
 
         setLocChangeModalIsOpen(true);
+        setLocChangeModalSearch("");
     }
 
     const closeModal = () => {
         setLocChangeModalIsOpen(false);
+        setAccessModalIsOpen(false);
     }
 
     return (
@@ -48,6 +60,7 @@ export default function AboutTrip() {
 
             position="relative"
         >
+            {/* 장소 교체 모달창 */}
             <Modal
                 isOpen={locChangeModalIsOpen}
                 onRequestClose={closeModal}
@@ -72,7 +85,7 @@ export default function AboutTrip() {
                         }
                     }
                 }
-                contentLabel="Example Modal"
+                contentLabel="장소 교체"
             >
                 <Flex
                     flexDirection="column"
@@ -124,15 +137,117 @@ export default function AboutTrip() {
 
                         mt="20px"
                     >
-                        <Flex
+                        <Box
                             bg='#EEEEEE'
                             w="100%"
                             h="100%"
-                        >
 
-                        </Flex>
+                            rounded="15px"
+                        >
+                            <Flex
+                                alignItems="center"
+
+                                p="20px"
+
+                                justifyContent="space-between"
+                            >
+                                <Flex
+                                    alignItems="center"
+                                >
+                                    <Box
+                                        w="75px"
+                                        h="75px"
+                                        borderRadius="15px"
+                                        overflow="hidden"
+                                    >
+                                        <Image
+                                            w="100%"
+                                            h="100%"
+                                            src={TestImg}
+                                        />
+                                    </Box>
+
+                                    <Flex
+                                        pl="15px"
+                                        gap="5px"
+
+                                        flexDirection="column"
+                                    >
+                                        <Text fontSize="17px" color="#727272">
+                                            짜장꽃필무렵
+                                        </Text>
+                                        <Text fontSize="12px" color="#B3B3B3">
+                                            경상북도 구미시 대학로 39
+                                        </Text>
+                                    </Flex>
+                                </Flex>
+
+                                <Flex>
+                                    <Image
+                                        src={Loop}
+                                        alt="loop"
+                                    />
+                                </Flex>
+                            </Flex>
+                        </Box>
 
                     </Flex>
+                </Flex>
+            </Modal>
+
+            {/* 일정 공유 모달창 */}
+            <Modal
+                isOpen={accessModalIsOpen}
+                onRequestClose={closeModal}
+                style={
+                    {
+                        overlay: {
+                            backgroundColor: '#000000A0',
+                        },
+                        content: {
+                            top: '50%',
+                            left: '50%',
+                            right: 'auto',
+                            bottom: 'auto',
+                            width: '689px',
+                            height: '628px',
+                            marginRight: '-50%',
+                            background: "#F4F4F4",
+                            border: "none",
+                            borderRadius: "25px",
+                            transform: 'translate(-50%, -50%)',
+                            padding: "40px",
+                        }
+                    }
+                }
+                contentLabel="일정 공유"
+            >
+                <Flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    w="100%"
+                >
+                    <Text
+                        fontSize="20px"
+                        color="#575757"
+                    >
+                        엑세스 권한이 있는 사용자
+                    </Text>
+
+                    <Image
+                        src={Close}
+                        alt="close"
+                        onClick={closeModal}
+                        cursor="pointer"
+                    />
+                </Flex>
+
+                <Flex
+                w="100%"
+                h="100%"
+                    bg={NicknameToHexColor("안재범")["color"]}
+                >
+
                 </Flex>
             </Modal>
 
@@ -169,6 +284,15 @@ export default function AboutTrip() {
                         bg="#93E2FF"
 
                         borderRadius="25px"
+
+                        cursor="pointer"
+                        transition="0.3s all ease-in-out"
+
+                        _hover={{
+                            backgroundColor: "#7CC4E5",
+                        }}
+
+                        onClick={() => setAccessModalIsOpen(true)}
                     >
                         <Image src={EarthImg} alt="earth" />
                         <Text>공유</Text>
