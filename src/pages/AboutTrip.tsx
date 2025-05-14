@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Input, useBreakpointValue } from "@chakra-ui/react";
 
 import EarthImg from "@/assets/earth.svg";
+import Close from "@/assets/close.svg";
 import TestImg from "@/assets/testimage.jpg";
 
 import MapBox from "@/components/Map/MapBox";
@@ -17,6 +18,7 @@ export default function AboutTrip() {
     const [ date, setDate ] = useState<Date>(new Date("2025-10-01"));
 
     const [ locChangeModalIsOpen, setLocChangeModalIsOpen ] = useState(false);
+    const [ locChangeModalSearch, setLocChangeModalSearch ] = useState("");
 
     const dayUp = () => {
         const newDate = new Date(date);
@@ -32,7 +34,11 @@ export default function AboutTrip() {
     const changeLocation = (index: number) => {
         // 모달창 띄워서 새 장소 받음, 모달창 띄우는 코드
 
-        
+        setLocChangeModalIsOpen(true);
+    }
+
+    const closeModal = () => {
+        setLocChangeModalIsOpen(false);
     }
 
     return (
@@ -45,12 +51,99 @@ export default function AboutTrip() {
             <Modal
                 isOpen={locChangeModalIsOpen}
                 onRequestClose={closeModal}
-                style={customStyles}
+                style={
+                    {
+                        overlay: {
+                            backgroundColor: '#000000A0',
+                        },
+                        content: {
+                            top: '50%',
+                            left: '50%',
+                            right: 'auto',
+                            bottom: 'auto',
+                            width: '576px',
+                            height: '723px',
+                            marginRight: '-50%',
+                            background: "#F4F4F4",
+                            border: "none",
+                            borderRadius: "25px",
+                            transform: 'translate(-50%, -50%)',
+                            padding: "40px",
+                        }
+                    }
+                }
                 contentLabel="Example Modal"
             >
-                <Text>모달창 테스트</Text>
+                <Flex
+                    flexDirection="column"
+                    h="100%"
+                    w="100%"
+
+                >
+                    <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Text
+                            fontSize="30px"
+                            color="#5A5A5A"
+                        >
+                            교체할 장소를 선택하세요
+                        </Text>
+                        <Image
+                            src={Close}
+                            alt="close"
+                            onClick={closeModal}
+                            cursor="pointer"
+                        />
+                    </Flex>
+
+                    <Input
+                        mt="25px"
+                        placeholder="장소를 검색하세요"
+                        p="10px"
+                        value={locChangeModalSearch}
+                        onChange={(e) => setLocChangeModalSearch(e.target.value)}
+                        border="0px"
+                        borderBottom="1px solid #747474"
+                        borderRadius="0px"
+                        outline="none"
+                        fontSize="20px"
+                        _placeholder={
+                            {
+                                fontSize: "20px",
+                                color: "#747474"
+                            }
+                        }
+                    />
+
+                    <Flex
+                        justifyContent="center"
+                        w="100%"
+                        h="100%"
+
+                        mt="20px"
+                    >
+                        <Flex
+                            bg='#EEEEEE'
+                            w="100%"
+                            h="100%"
+                        >
+
+                        </Flex>
+
+                    </Flex>
+                </Flex>
             </Modal>
-            <Box h="100vh" w="50vw" float="left" zIndex={1}>
+
+            <Flex
+                w="50vw"
+                h="100vh"
+                
+                flexDirection="column"
+                float="left"
+                zIndex={1}
+            >
                 <Flex
                     justifyContent="space-between"
                     alignItems="center"
@@ -118,7 +211,7 @@ export default function AboutTrip() {
                     mt="50px"
                     justifyContent="center"
 
-                    h="450px"
+                    h="calc(100% - 300px)"
 
                     gap="5px"
                 >
@@ -185,6 +278,16 @@ export default function AboutTrip() {
 
                                         w="80px"
                                         h="35px"
+
+                                        cursor="pointer"
+
+                                        transition="0.3s all ease-in-out"
+
+                                        _hover={{
+                                            backgroundColor: "#E9E9E9",
+                                        }}
+
+                                        onClick={() => changeLocation(1)}
                                     >
                                         <Text
                                             color="#696969"
@@ -197,11 +300,11 @@ export default function AboutTrip() {
                         </Flex>
                     </Flex>
                 </Flex>
-            </Box>
+            </Flex>
 
-            <Box h="100vh" w="50vw" float="left">
+            <Flex h="100vh" w="50vw" float="left">
                 <MapBox locationData={locationData} />
-            </Box>
+            </Flex>
         </Box>
     );
 }
