@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import { Box, Flex, Text, Image, Input, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Input, Link, useBreakpointValue } from "@chakra-ui/react";
 
 import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
@@ -27,6 +27,39 @@ export default function AboutTrip() {
     
     // 일정 공유 모달창 관련 변수
     const [ accessModalIsOpen, setAccessModalIsOpen ] = useState(false);
+
+    const [ accessUserList, setAccessUserList ] = useState([
+        {
+            name: "안재범",
+            email: "ajb@instantrip.ajb.kr",
+            color: NicknameToHexColor("안재범")["color"],
+            text_color: NicknameToHexColor("안재범").textColor,
+        },
+        {
+            name: "김태완",
+            email: "ktw@instantrip.ajb.kr",
+            color: NicknameToHexColor("김태완").color,
+            text_color: NicknameToHexColor("김태완").textColor,
+        },
+        {
+            name: "이동희",
+            email: "lee@instantrip.ajb.kr",
+            color: NicknameToHexColor("이동희").color,
+            text_color: NicknameToHexColor("이동희").textColor,
+        },
+        {
+            name: "박수현",
+            email: "qtg@instantrip.ajb.kr",
+            color: NicknameToHexColor("박수현").color,
+            text_color: NicknameToHexColor("박수현").textColor,
+        },
+        {
+            name: "노현우",
+            email: "qtg@instantrip.ajb.kr",
+            color: NicknameToHexColor("노현우").color,
+            text_color: NicknameToHexColor("노현우").textColor,
+        }
+    ]);
     
     // 날짜 관련 변수
     const [ date, setDate ] = useState<Date>(new Date("2025-10-01"));
@@ -52,6 +85,9 @@ export default function AboutTrip() {
         setLocChangeModalIsOpen(false);
         setAccessModalIsOpen(false);
     }
+
+    // 반응형
+    const logoFontSize: string = useBreakpointValue({ base: "25px", md: "30px" }) as string;
 
     return (
         <Box
@@ -223,31 +259,119 @@ export default function AboutTrip() {
                 contentLabel="일정 공유"
             >
                 <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
+                    flexDirection="column"
+                    h="100%"
                     w="100%"
                 >
-                    <Text
-                        fontSize="20px"
-                        color="#575757"
+
+                    <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="100%"
                     >
-                        엑세스 권한이 있는 사용자
-                    </Text>
+                        <Text
+                            fontSize="24px"
+                            color="#575757"
+                        >
+                            엑세스 권한이 있는 사용자
+                        </Text>
 
-                    <Image
-                        src={Close}
-                        alt="close"
-                        onClick={closeModal}
-                        cursor="pointer"
-                    />
-                </Flex>
+                        <Image
+                            src={Close}
+                            alt="close"
+                            onClick={closeModal}
+                            cursor="pointer"
+                        />
+                    </Flex>
 
-                <Flex
-                w="100%"
-                h="100%"
-                    bg={NicknameToHexColor("안재범")["color"]}
-                >
+                    <Flex
+                        w="100%"
+                        h="397px"
+                        mt="20px"
+                        overflowY="auto"
+                        flexDirection="column"
+                        pl="20px"
+                        css={{
+                            '&::-webkit-scrollbar': {
+                                width: '8px',
+                            },
+                            '&::-webkit-scrollbar-track': {
+                                background: 'none',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                background: '#CBCBCB',
+                                borderRadius: '4px',
+                            },
+                        }}
 
+                        gap="10px"
+                    >
+                        {accessUserList.map((user, index) => (
+                            <Flex
+                                key={index}
+                                w="100%"
+                                alignItems="center"
+                            >
+                                <Flex
+                                    w="50px"
+                                    h="50px"
+                                    borderRadius="50%"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    bg={user.color}
+                                    color={user.text_color}
+                                    fontSize="18px"
+                                >
+                                    {user.name.charAt(0)}
+                                </Flex>
+                                <Flex
+                                    ml="15px"
+                                    flexDirection="column"
+                                >
+                                    <Text
+                                        fontSize="16px"
+                                        color="#575757"
+                                        fontWeight="bold"
+                                    >
+                                        {user.name}
+                                    </Text>
+                                    <Text
+                                        fontSize="14px"
+                                        color="#CBCBCB"
+                                    >
+                                        {user.email}
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                        ))}
+                    </Flex>
+
+                    <Flex
+                        direction="column"
+
+                        gap="10px"
+                    >
+                        <Text
+                            fontSize="24px"
+                            color="#575757"
+                        >
+                            공유
+                        </Text>
+                        <Flex
+                            ml="20px"
+
+                            border="1px solid #DEDEDE"
+
+                            alignItems="center"
+                            px="9px"
+                        >
+                            <Text
+                                fontSize="16px"
+                            >
+                                URL
+                            </Text>
+                        </Flex>
+                    </Flex>
                 </Flex>
             </Modal>
 
@@ -266,12 +390,21 @@ export default function AboutTrip() {
                     px="50px"
                     pt="30px"
                 >
-                    <Text
-                        fontSize="30px"
+                    <Link
+                        fontSize={logoFontSize}
                         color="#585858"
+
+                        outline="none"
+                        textDecoration="none"
+                        href="/"
+                        
+                        _hover={{
+                            textDecoration: "none",
+                            color: "#585858",
+                        }}
                     >
-                        InstanTrip.
-                    </Text>
+                        InstanTrip
+                    </Link>
                     <Flex
                         justifyContent="center"
                         alignItems="center"
