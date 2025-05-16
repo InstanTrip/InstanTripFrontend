@@ -74,7 +74,7 @@ export default function Area() {
                 _hover={{ backgroundColor: "#3182ce", color: "white" }}
               >
                 {city}
-              </Button>
+              </Button> 
             ))}
           </Grid>
         </Box>

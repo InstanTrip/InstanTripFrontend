@@ -11,6 +11,7 @@ import TripSetting from './pages/TripSetting';
 import Mypage from './pages/Mypage';
 import ShowTrip from './pages/ShowTrip';
 import AboutTrip from './pages/AboutTrip';
+import Login from './pages/LoginPage';
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient();
@@ -36,6 +37,9 @@ createRoot(document.getElementById('root')!).render(
 
             {/* 테스트 */}
             <Route path="/test" element={<AboutTrip />} />
+
+            {/* 로그인 페이지 */}
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </Router>
       </Provider>

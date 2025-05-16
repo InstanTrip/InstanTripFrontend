@@ -68,8 +68,11 @@ export default function TripSetting() {
                     <Text color="#575757" mt="30px" fontSize="20px">
                         떠나고 싶은 지역
                     </Text>
-                    <Box mt="100px">
-                        <Area />
+                    <Box 
+                      mt="100px"
+                      maxH="60px"
+                    >
+                      <Area />
                     </Box>
                 </>
             )}
