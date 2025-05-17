@@ -10,6 +10,7 @@ import Main from './pages/Main';
 import CreateTrip from './pages/CreateTrip';
 import Mypage from './pages/Mypage';
 import AboutTrip from './pages/AboutTrip';
+import NotFoundPage from './pages/NotFoundPage';
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient();
@@ -32,6 +33,9 @@ createRoot(document.getElementById('root')!).render(
             
             {/* 여행 출력 */}
             <Route path="/aboutrip" element={<AboutTrip />} />
+
+            {/* 404 NotFoundPage */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
       </Provider>
