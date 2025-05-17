@@ -34,46 +34,6 @@ export default function ChangeUserInfo() {
 
                     mt="30px"
                 >
-                    <GridItem
-                        borderBottom="1px solid #BCBCBC"
-                        h="80px"
-                        bgColor="#E7E7E7"
-                    >
-                        <Flex
-                            w="100%"
-                            h="100%"
-
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Text
-                                fontSize="20px"
-                                color="#6D6767"
-                            >
-                                ID
-                            </Text>
-                        </Flex>
-                    </GridItem>
-                    <GridItem
-                        borderBottom="1px solid #BCBCBC"
-                        colSpan={4}
-                    >
-                        <Flex
-                            w="100%"
-                            h="100%"
-
-                            alignItems="center"
-
-                            px="30px"
-                        >
-                            <Text
-                                fontSize="20px"
-                                color="#6D6767"
-                            >
-                                {userId}
-                            </Text>
-                        </Flex>
-                    </GridItem>
 
                     <GridItem
                         borderBottom="1px solid #BCBCBC"

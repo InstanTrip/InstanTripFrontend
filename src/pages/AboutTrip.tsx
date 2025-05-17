@@ -6,10 +6,13 @@ import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
 import Loop from "@/assets/icon_loop.svg";
 import TestImg from "@/assets/testimage.jpg";
+import TriangleArrow from "@/assets/triangle_arrow.svg";
 
 import MapBox from "@/components/Map/MapBox";
 
 import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
+import { LuZoomIn } from 'react-icons/lu';
+import { is } from 'date-fns/locale';
 
 export default function AboutTrip() {
     // 지도에 표시할 장소 데이터
@@ -88,8 +91,42 @@ export default function AboutTrip() {
         setAccessModalIsOpen(false);
     }
 
+
+
+
     // 반응형
+    // 로고 반응형
     const logoFontSize: string = useBreakpointValue({ base: "25px", md: "30px" }) as string;
+
+    const isMobile: boolean = useBreakpointValue({ base: true, md: false }) as boolean;
+    const leftSlideWidth: string = useBreakpointValue({ base: "100vw", md: "50vw" }) as string;
+    const mapWidth: string = useBreakpointValue({ base: "100vw", md: "50vw" }) as string;
+
+    const changeLocModalWidth: string = useBreakpointValue({ base: "90vw", md: "576px" }) as string;
+    const changeLocModalHeight: string = useBreakpointValue({ base: "95vh", md: "723px" }) as string;
+    const changeLocModalTitle: string = useBreakpointValue({ base: "17px", md: "30px" }) as string;
+
+    const shareModalWidth: string = useBreakpointValue({ base: "90vw", md: "689px" }) as string;
+    const shareModalHeight: string = useBreakpointValue({ base: "95vh", md: "628px" }) as string;
+    const shareModalTitle: string = useBreakpointValue({ base: "17px", md: "24px" }) as string;
+
+    const [leftSlideLeft, setLeftSlideLeft] = useState("0px");
+
+
+    // 0: 기본값
+    // 1: 일정창이 지도를 가림
+    const [ slideStatus, setSlideStatus ] = useState(0);
+
+
+    const togleSlideStatus = () => {
+        if (slideStatus === 0) {
+            setLeftSlideLeft("-100vw");
+            setSlideStatus(1);
+        } else {
+            setLeftSlideLeft("0vw");
+            setSlideStatus(0);
+        }
+    }
 
     return (
         <Box
@@ -106,14 +143,15 @@ export default function AboutTrip() {
                     {
                         overlay: {
                             backgroundColor: '#000000A0',
+                            zIndex: 1000,
                         },
                         content: {
                             top: '50%',
                             left: '50%',
                             right: 'auto',
                             bottom: 'auto',
-                            width: '576px',
-                            height: '723px',
+                            width: changeLocModalWidth,
+                            height: changeLocModalHeight,
                             marginRight: '-50%',
                             background: "#F4F4F4",
                             border: "none",
@@ -136,7 +174,7 @@ export default function AboutTrip() {
                         alignItems="center"
                     >
                         <Text
-                            fontSize="30px"
+                            fontSize={changeLocModalTitle}
                             color="#5A5A5A"
                         >
                             교체할 장소를 선택하세요
@@ -241,14 +279,15 @@ export default function AboutTrip() {
                     {
                         overlay: {
                             backgroundColor: '#000000A0',
+                            zIndex: 1000,
                         },
                         content: {
                             top: '50%',
                             left: '50%',
                             right: 'auto',
                             bottom: 'auto',
-                            width: '689px',
-                            height: '628px',
+                            width: shareModalWidth,
+                            height: shareModalHeight,
                             marginRight: '-50%',
                             background: "#F4F4F4",
                             border: "none",
@@ -272,7 +311,7 @@ export default function AboutTrip() {
                         w="100%"
                     >
                         <Text
-                            fontSize="24px"
+                            fontSize={shareModalTitle}
                             color="#575757"
                         >
                             엑세스 권한이 있는 사용자
@@ -292,7 +331,7 @@ export default function AboutTrip() {
                         mt="20px"
                         overflowY="auto"
                         flexDirection="column"
-                        pl="20px"
+                        pl={isMobile ? "10px" : "20px"}
                         css={{
                             '&::-webkit-scrollbar': {
                                 width: '8px',
@@ -315,14 +354,14 @@ export default function AboutTrip() {
                                 alignItems="center"
                             >
                                 <Flex
-                                    w="50px"
-                                    h="50px"
+                                    w={isMobile ? "40px" : "50px"}
+                                    h={isMobile ? "40px" : "50px"}
                                     borderRadius="50%"
                                     justifyContent="center"
                                     alignItems="center"
                                     bg={user.color}
                                     color={user.text_color}
-                                    fontSize="18px"
+                                    fontSize={isMobile ? "13px" : "18px"}
                                 >
                                     {user.name.charAt(0)}
                                 </Flex>
@@ -331,14 +370,14 @@ export default function AboutTrip() {
                                     flexDirection="column"
                                 >
                                     <Text
-                                        fontSize="16px"
+                                        fontSize={isMobile ? "14px" : "16px"}
                                         color="#575757"
                                         fontWeight="bold"
                                     >
                                         {user.name}
                                     </Text>
                                     <Text
-                                        fontSize="14px"
+                                        fontSize={isMobile ? "12px" : "14px"}
                                         color="#CBCBCB"
                                     >
                                         {user.email}
@@ -354,13 +393,13 @@ export default function AboutTrip() {
                         gap="10px"
                     >
                         <Text
-                            fontSize="24px"
+                            fontSize={shareModalTitle}
                             color="#575757"
                         >
                             공유
                         </Text>
                         <Flex
-                            ml="20px"
+                            ml={isMobile ? "10px" : "20px"}
 
                             border="1px solid #DEDEDE"
 
@@ -377,20 +416,28 @@ export default function AboutTrip() {
                 </Flex>
             </Modal>
 
-            <Flex
-                w="50vw"
+            <Box
+                w={leftSlideWidth}
                 h="100vh"
+                
+                position="absolute"
                 
                 flexDirection="column"
                 float="left"
+
+                bg="#F4F4F4"
                 zIndex={1}
+
+                left={leftSlideLeft}
+
+                transition="0.3s all ease-in-out"
             >
                 <Flex
                     justifyContent="space-between"
                     alignItems="center"
 
-                    px="50px"
-                    pt="30px"
+                    px={isMobile ? "20px" : "50px"}
+                    pt={isMobile ? "20px" : "30px"}
                 >
                     <Link
                         fontSize={logoFontSize}
@@ -412,8 +459,8 @@ export default function AboutTrip() {
                         alignItems="center"
                         gap="5px"
 
-                        w="100px"
-                        h="50px"
+                        w={isMobile ? "65px" : "100px"}
+                        h={isMobile ? "35px" : "50px"}
 
                         color="white"
                         bg="#93E2FF"
@@ -429,8 +476,14 @@ export default function AboutTrip() {
 
                         onClick={() => setAccessModalIsOpen(true)}
                     >
-                        <Image src={EarthImg} alt="earth" />
-                        <Text>공유</Text>
+                        <Image
+                            src={EarthImg}
+                            alt="earth"
+                            w={isMobile ? "15px" : "20px"}
+                        />
+                        <Text
+                            fontSize={isMobile ? "13px" : "18px"}
+                        >공유</Text>
                     </Flex>
                 </Flex>
 
@@ -438,10 +491,11 @@ export default function AboutTrip() {
                     mt="40px"
                     justifyContent="center"
 
+                    fontSize={isMobile ? "25px" : "32px"}
+
                     gap="5px"
                 >
                     <Text
-                        fontSize="32px"
                         color="#585858"
 
                         onClick={dayDown}
@@ -450,13 +504,11 @@ export default function AboutTrip() {
                         ⏴
                     </Text>
                     <Text
-                        fontSize="32px"
                         color="#585858"
                     >
                         {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일
                     </Text>
                     <Text
-                        fontSize="32px"
                         color="#585858"
 
                         onClick={dayUp}
@@ -479,12 +531,12 @@ export default function AboutTrip() {
                         w="100%"
                     >
                         <Flex
-                            w="70%"
-                            py="20px"
+                            w={isMobile ? "90%" : "70%"}
+                            py={isMobile ? "0px" : "20px"}
                         >
                             {/* 세로선 */}
                             <Flex
-                                w="60px"
+                                w={isMobile ? "10px" : "60px"}
                                 borderRight="1px solid #606060"
                             />
                             <Flex
@@ -494,26 +546,34 @@ export default function AboutTrip() {
                                 flexDirection="column"
                                 w="100%"
                             >
-                                <Text>
+                                <Text
+                                    fontSize={isMobile ? "17px" : "20px"}
+                                >
                                     1번째
                                 </Text>
                                 <Flex
                                     justifyContent="space-between"
                                     alignItems="center"
 
-                                    pl="50px"
+                                    pl={isMobile ? "10px" : "20px"}
                                     mt="5px"
 
                                     w="100%"
                                 >
-                                    <Flex>
+                                    <Flex
+                                        alignItems="center"
+                                    >
                                         <Box
-                                            w="75px"
-                                            h="75px"
+                                            w={isMobile ? "60px" : "75px"}
+                                            h={isMobile ? "60px" : "75px"}
                                             borderRadius="15px"
                                             overflow="hidden"
                                         >
-                                            <Image w="75px" h="75px" src={TestImg} />
+                                            <Image
+                                                w={isMobile ? "60px" : "75px"}
+                                                h={isMobile ? "60px" : "75px"}
+                                                src={TestImg}
+                                            />
                                         </Box>
 
                                         <Box
@@ -559,10 +619,56 @@ export default function AboutTrip() {
                         </Flex>
                     </Flex>
                 </Flex>
-            </Flex>
+            </Box>
 
-            <Flex h="100vh" w="50vw" float="left">
+            <Box
+                h="100vh"
+                w={mapWidth}
+                float="left"
+                
+                position="absolute"
+                right="0"
+            >
                 <MapBox locationData={locationData} />
+            </Box>
+
+            {/* 플로팅버튼 */}
+            <Flex
+                position="absolute"
+                bottom="30px"
+                right="30px"
+
+                w="50px"
+                h="50px"
+
+                justifyContent="center"
+                alignItems="center"
+
+                bg="#93E2FF"
+                borderRadius="50%"
+
+                zIndex={2}
+
+                cursor="pointer"
+                transition="0.3s all ease-in-out"
+
+                _hover={{
+                    backgroundColor: "#7CC4E5",
+                }}
+
+                onClick={togleSlideStatus}
+
+                // 모바일일 경우에만 나타남
+                display={isMobile ? "flex" : "none"}
+
+                transform={slideStatus === 0 ? "rotate(90deg)" : "rotate(-90deg)"}
+            >
+                <Image
+                    mb="3px"
+                    w="20px"
+                    src={TriangleArrow}
+                    alt="triangle"
+                />
             </Flex>
         </Box>
     );

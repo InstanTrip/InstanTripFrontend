@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
 
 import StatusBar from '@/components/CreateTrip/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';
@@ -21,8 +21,20 @@ export default function CreateTrip() {
         if (page < 3) setPage(page + 1);
     };
 
+    // 여행 기간 선택
+    const [startDate, setStartDate] = useState<Date | null>(new Date());
+    const [endDate, setEndDate] = useState<Date | null>(null);
+
     // 지역 선택
     const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+
+    // 취향 선택
+    const [destinationTaste, setDestinationTaste] = useState<string[]>([]);
+    const [foodTaste, setFoodTaste] = useState<string[]>([]);
+    const [accommodationTaste, setAccommodationTaste] = useState<string[]>([]);
+
+
+    const gap = useBreakpointValue({ base: "15px", md: "70px" });
 
     return (
         <Flex
@@ -36,30 +48,67 @@ export default function CreateTrip() {
             {/* 1, 2, 3 띄워주는놈 */}
             <Flex
                 w="100%"
-                h="40px"
-                justifyContent="center"
+                h="100px"
+                alignItems="center"
                 mt="30px"
-                // mt="10px"
-                // border="1px solid red"
+
+                direction="column"
             >
-                <StatusBar count={page} />
+                <StatusBar count={page} setPage={setPage} />
+                {
+                    page === 1 ? (
+                        <Text color="#575757" mt="30px" fontSize="20px">
+                            여행 기간 선택
+                        </Text>
+                    ) : page === 2 ? (
+                        <Text color="#575757" mt="30px" fontSize="20px">
+                            떠나고 싶은 지역
+                        </Text>
+                    ) : (
+                        <Text color="#575757" mt="30px" fontSize="20px">
+                            취향 선택
+                        </Text>
+                    )
+                }
             </Flex>
 
 
             <Flex
-                my="100px"
+                my={gap}
                 h="100%"
-                alignItems="center"
+                // alignItems="center"
+                overflowY="auto"
+                px="10px"
             >
                 {/* 여행 기간 선택 */}
                 {page === 1 && (
-                    <Calender />
+                    <Flex
+                        alignItems="center"
+                    >
+                        <Calender
+                            startDate={startDate}
+                            setStartDate={setStartDate}
+                            endDate={endDate}
+                            setEndDate={setEndDate}
+                        />
+                    </Flex>
                 )}
                 
                 {page === 2 && (
                     <Area
                         selectedAreas={selectedAreas}
                         setSelectedAreas={setSelectedAreas}
+                    />
+                )}
+
+                {page === 3 && (
+                    <Taste
+                        destinationTaste={destinationTaste}
+                        setDestinationTaste={setDestinationTaste}
+                        foodTaste={foodTaste}
+                        setFoodTaste={setFoodTaste}
+                        accommodationTaste={accommodationTaste}
+                        setAccommodationTaste={setAccommodationTaste}
                     />
                 )}
             </Flex>
@@ -84,24 +133,24 @@ export default function CreateTrip() {
                 </Button>
             )}
 
-            {/* 마지막 페이지임 */}
+            {/* 마지막 페이지일 경우 일정 생성 버튼 */}
             {page === 3 && (
-                <>
-                    <Text color="#575757" mt="30px" fontSize="20px">
-                        취향 선택
-                    </Text>
-                    <Box mt="30px">
-                        <Taste />
-                    </Box>
-                    <Button
-                        mt="80px"
-                        fontSize="20px"
-                        backgroundColor="#F4F4F4"
-                        color="#575757"
-                    >
-                        여행 일정 생성하기 ⏵
-                    </Button>
-                </>
+                <Button
+                    fontSize="20px"
+                    backgroundColor="#F4F4F4"
+                    color="#575757"
+                    onClick={handleNextPage}
+                    mb="30px"
+                    outline="none"
+                    border="none"
+
+                    _focus={{
+                        border: "none",
+                        outline: "none",
+                    }}
+                >
+                    여행 일정 생성하기 ⏵
+                </Button>
             )}
         </Flex>
     );

@@ -79,13 +79,23 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+
+  /* 스크롤바 배경색 없애기 */
+  ::-webkit-scrollbar {
+    background-color: transparent;
+  }
+  /* 스크롤바 색깔 */
+  ::-webkit-scrollbar-thumb {
+    background-color: #d8d8d8;
+    border-radius: 10px;
+  }
 }
 
 
 @media (prefers-color-scheme: dark) {
   /* 단일 선택(선택된 날짜)의 배경색 제거 */
   .react-datepicker__day--selected {
-    background: transparent !important;
+    background: #333 !important;
     color: #fff !important;
   }
 

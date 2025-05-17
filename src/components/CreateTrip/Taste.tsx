@@ -1,64 +1,283 @@
-import React, { useState } from 'react';
-import { Box, Button, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import React, { useState } from "react";
+import {
+    Flex,
+    Text,
+    Input,
+    Button,
+    useBreakpointValue,
+} from "@chakra-ui/react";
 
-interface TasteProps {
-  onSelectTaste: (category: string, item: string) => void;
-}
+export default function Taste({
+    destinationTaste,
+    setDestinationTaste,
+    foodTaste,
+    setFoodTaste,
+    accommodationTaste,
+    setAccommodationTaste
+}: {
+    destinationTaste: string[],
+    setDestinationTaste: React.Dispatch<React.SetStateAction<string[]>>,
+    foodTaste: string[],
+    setFoodTaste: React.Dispatch<React.SetStateAction<string[]>>,
+    accommodationTaste: string[],
+    setAccommodationTaste: React.Dispatch<React.SetStateAction<string[]>>
+}) {
+    
+    // 입력 필드 상태 관리
+    const [destinationInput, setDestinationInput] = useState("");
+    const [foodInput, setFoodInput] = useState("");
+    const [accommodationInput, setAccommodationInput] = useState("");
+    
+    // 태그 추가 함수
+    const addTag = (
+        input: string, 
+        setInput: React.Dispatch<React.SetStateAction<string>>,
+        tags: string[],
+        setTags: React.Dispatch<React.SetStateAction<string[]>>
+    ) => {
+        if (input.trim() !== "" && !tags.includes(input.trim())) {
+            setTags([...tags, input.trim()]);
+            setInput("");
+        }
+    };
+    
+    // 태그 제거 함수
+    const removeTag = (
+        index: number,
+        tags: string[],
+        setTags: React.Dispatch<React.SetStateAction<string[]>>
+    ) => {
+        setTags(tags.filter((_, i) => i !== index));
+    };
+    
+    // 키 입력 핸들러 (Enter 키 처리)
+    const handleKeyDown = (
+        e: React.KeyboardEvent,
+        input: string,
+        setInput: React.Dispatch<React.SetStateAction<string>>,
+        tags: string[],
+        setTags: React.Dispatch<React.SetStateAction<string[]>>
+    ) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addTag(input, setInput, tags, setTags);
+        }
+    };
 
-export default function Taste({ onSelectTaste }: TasteProps) {
-  const [selectedTastes, setSelectedTastes] = useState<{ [key: string]: Set<string> }>({
-    "음식": new Set(),
-    "여행지": new Set(),
-    "숙소": new Set(),
-  });
+    // 태그 렌더링 함수
+    const renderTags = (
+        tags: string[], 
+        setTags: React.Dispatch<React.SetStateAction<string[]>>,
+        colorScheme: string
+    ) => {
+        return tags.map((tag, index) => (
+            <Flex
+                key={index}
+                bg={`${colorScheme}.500`}
+                color="white"
+                borderRadius="full"
 
-  const categories: { [key: string]: string[] } = {
-    "음식": ['한식', '호프/통닭', '카페', '탕류(보신용)', '분식', '패스트푸드', '정종/대표집/소주방', '경양식', '횟집', '일식'],
-    "여행지": ['경치', '정원', '연못', '바다', '숲'],
-    "숙소": ['호텔', '모텔'],
-  };
+                px="10px"
+                py="5px"
+                
+                display="inline-flex"
+                alignItems="center"
 
-  const toggleTaste = (category: string, item: string) => {
-    setSelectedTastes((prev) => {
-      const updated = new Set(prev[category]);
-      if (updated.has(item)) {
-        updated.delete(item);
-      } else {
-        updated.add(item);
-        onSelectTaste(category, item);
-      }
-      return { ...prev, [category]: updated };
-    });
-  };
-
-  const isSelected = (category: string, item: string) => {
-    return selectedTastes[category]?.has(item);
-  };
-
-  return (
-    <Box p="20px" border="1px solid #ddd" borderRadius="md" maxW="700px" mx="auto">
-      {Object.entries(categories).map(([category, items]) => (
-        <Box key={category} mb="28px" textAlign="left">
-          <Text fontWeight="bold" fontSize="18px" mb="12px">{category}</Text>
-          <Wrap spacing="10px">
-            {items.map((item, idx) => (
-              <WrapItem key={`${item}-${idx}`}>
-                <Button
-                  size="sm"
-                  variant="solid"
-                  borderRadius="8px"
-                  backgroundColor={isSelected(category, item) ? '#93E2FF' : '#F4F4F4'}
-                  color={isSelected(category, item) ? 'white' : '#575757'}
-                  _hover={{ backgroundColor: '#3182ce', color: 'white' }}
-                  onClick={() => toggleTaste(category, item)}
+                gap="4px"
+            >
+                <Text fontSize="sm">{tag}</Text>
+                <Flex
+                    fontSize="xs"
+                    onClick={() => removeTag(index, tags, setTags)}
+                    alignItems="center"
+                    justifyContent="center"
+                    w="16px"
+                    h="16px"
+                    borderRadius="full"
+                    bg="rgba(255,255,255,0.3)"
+                    _hover={{ bg: "rgba(255,255,255,0.5)" }}
                 >
-                  {item}
-                </Button>
-              </WrapItem>
-            ))}
-          </Wrap>
-        </Box>
-      ))}
-    </Box>
-  );
+                    <Text
+                        fontSize="10px"
+                    >
+                        ✕
+                    </Text>
+                </Flex>
+            </Flex>
+        ));
+    };
+
+
+
+
+    const width = useBreakpointValue({ base: "100vw", md: "600px" });
+
+    return (
+        <Flex
+            w={width}
+
+            px="15px"
+
+            direction="column"
+
+            alignItems="center"
+            justifyContent="center"
+        >
+            <Flex
+                w="100%"
+                gap={6}
+                direction="column"
+            >
+                <Flex
+                    direction="column"
+                >
+                    <Text
+                        color="#575757"
+                        fontSize="20px"
+                    >
+                        여행지 취향
+                    </Text>
+                    <Flex
+                        gap="5px"
+                    >
+                        <Input
+                            value={destinationInput}
+                            onChange={(e) => setDestinationInput(e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e, destinationInput, setDestinationInput, destinationTaste, setDestinationTaste)}
+                            placeholder="Ex) 바다, 산, 인스타"
+
+                            border="1px solid rgb(207, 207, 207)"
+
+                            _focus={{
+                                border: "1px solid rgb(207, 207, 207)",
+                                outline: "none",
+                            }}
+                        />
+                        <Button 
+                            onClick={() => addTag(destinationInput, setDestinationInput, destinationTaste, setDestinationTaste)}
+                            bg="#E9ECF0"
+
+                            transition="all 0.2s ease-in-out"
+                            outline="none"
+                            border="none"
+
+                            _hover={{
+                                bg: "#93E2FF",
+                                color: "white",
+                            }}
+                            _focus={{
+                                border: "none",
+                                outline: "none",
+                            }}
+                        >
+                            추가
+                        </Button>
+                    </Flex>
+                    <Flex flexWrap="wrap" mt="5px" gap="5px">
+                        {renderTags(destinationTaste, setDestinationTaste, "blue")}
+                    </Flex>
+                </Flex>
+                
+                <Flex
+                    direction="column"
+                >
+                    <Text
+                        color="#575757"
+                        fontSize="20px"
+                    >
+                        음식 취향
+                    </Text>
+                    <Flex
+                        gap="5px"
+                    >
+                        <Input
+                            value={foodInput}
+                            onChange={(e) => setFoodInput(e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e, foodInput, setFoodInput, foodTaste, setFoodTaste)}
+                            placeholder="Ex) 치킨, 한식, 달콤한, 전통음식"
+                            
+                            border="1px solid rgb(207, 207, 207)"
+
+                            _focus={{
+                                border: "1px solid rgb(207, 207, 207)",
+                                outline: "none",
+                            }}
+                        />
+                        <Button 
+                            onClick={() => addTag(foodInput, setFoodInput, foodTaste, setFoodTaste)}
+                            bg="#E9ECF0"
+
+                            transition="all 0.2s ease-in-out"
+                            outline="none"
+                            border="none"
+
+                            _hover={{
+                                bg: "#93E2FF",
+                                color: "white",
+                            }}
+                            _focus={{
+                                border: "none",
+                                outline: "none",
+                            }}
+                        >
+                            추가
+                        </Button>
+                    </Flex>
+                    <Flex flexWrap="wrap" mt="5px" gap="5px">
+                        {renderTags(foodTaste, setFoodTaste, "green")}
+                    </Flex>
+                </Flex>
+                
+                <Flex
+                    direction="column"
+                >
+                    <Text
+                        color="#575757"
+                        fontSize="20px"
+                    >
+                        숙소 취향
+                    </Text>
+                    <Flex
+                        gap="5px"
+                    >
+                        <Input
+                            value={accommodationInput}
+                            onChange={(e) => setAccommodationInput(e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e, accommodationInput, setAccommodationInput, accommodationTaste, setAccommodationTaste)}
+                            placeholder="Ex) 편안한, 호텔, 리조트"
+                            
+                            border="1px solid rgb(207, 207, 207)"
+
+                            _focus={{
+                                border: "1px solid rgb(207, 207, 207)",
+                                outline: "none",
+                            }}
+                        />
+                        <Button
+                            onClick={() => addTag(accommodationInput, setAccommodationInput, accommodationTaste, setAccommodationTaste)}
+                            bg="#E9ECF0"
+
+                            transition="all 0.2s ease-in-out"
+                            outline="none"
+                            border="none"
+
+                            _hover={{
+                                bg: "#93E2FF",
+                                color: "white",
+                            }}
+                            _focus={{
+                                border: "none",
+                                outline: "none",
+                            }}
+                        >
+                            추가
+                        </Button>
+                    </Flex>
+                    <Flex flexWrap="wrap" mt="5px" gap="5px">
+                        {renderTags(accommodationTaste, setAccommodationTaste, "purple")}
+                    </Flex>
+                </Flex>
+            </Flex>
+        </Flex>
+    );
 }

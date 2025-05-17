@@ -1,10 +1,12 @@
-import { useState, useEffect, React } from "react"
-import { Box, Flex, Text, Table, Checkbox, Pagination, ButtonGroup, IconButton, NativeSelect } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react"
+import { Flex, Text, Table, Checkbox, Pagination, ButtonGroup, IconButton, NativeSelect, useBreakpointValue } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
 
 import NotFoundSchedule from "./NotFoundSchedule";
 
 export default function Schedule() {
+    const isMobile = useBreakpointValue({ base: true, md: false });
+
     // 선택된 여행들 아이디 값
     const [selection, setSelection] = useState<number[]>([]);
     // 한번에 보여줄 여행 일정 개수
@@ -13,7 +15,7 @@ export default function Schedule() {
     const [nowPage, setNowPage] = useState<number>(1);
 
     // 여행 일정 목록을 보여줄 행들
-    const [rows, setRows] = useState<React.Element[]>([]);
+    const [rows, setRows] = useState<React.ReactElement[]>([]);
 
     // 여행 일정 개수
     const tripListPageSizeList = [15, 30, 50];
@@ -63,13 +65,13 @@ export default function Schedule() {
                 key={item.id}
                 data-selected={selection.includes(item.id) ? "" : undefined}
                 bgColor="transparent"
-                h="90px"
-                fontSize="20px"
+                h={isMobile ? "40px" : "90px"}
+                fontSize={isMobile ? "13px" : "20px"}
             >
                 <Table.Cell>
                     <Checkbox.Root
                         size="sm"
-                        pl="30px"
+                        pl={isMobile ? "10px" : "30px"}
                         top="0.5"
                         aria-label="Select row"
                         checked={selection.includes(item.id)}
@@ -89,7 +91,7 @@ export default function Schedule() {
                 <Table.Cell>{item.travel_destination}</Table.Cell>
                 <Table.Cell>{item.taste.join(", ")}</Table.Cell>
                 <Table.Cell textAlign="end">{item.start_date}</Table.Cell>
-                <Table.Cell textAlign="end" pr="40px">{item.end_date}</Table.Cell>
+                <Table.Cell textAlign="end" pr={isMobile ? "5px" : "40px"}>{item.end_date}</Table.Cell>
             </Table.Row>
         )))
     }
@@ -110,7 +112,7 @@ export default function Schedule() {
                         h="100vh"
 
                         py="20px"
-                        px="50px"
+                        px={isMobile ? "5px" : "50px"}
 
                         alignItems="center"
                         direction="column"
@@ -120,8 +122,8 @@ export default function Schedule() {
                     
                         {/* 상단바 */}
                         <Flex
-                            px="30px"
-                            h="90px"
+                            px={isMobile ? undefined : "30px"}
+                            h={isMobile ? "50px" : "90px"}
 
                             w="100%"
 
@@ -130,12 +132,12 @@ export default function Schedule() {
                         >
                             <Flex
                                 alignItems="center"
-                                gap="40px"
+                                gap={isMobile ? "5px" : "40px"}
                             >
                                 {/* 선택 삭제 버튼 */}
                                 <Flex
-                                    w="126px"
-                                    h="40px"
+                                    w={isMobile ? "75px" : "126px"}
+                                    h={isMobile ? "30px" : "40px"}
 
                                     bgColor="#FFDFDF"
                                     borderRadius="5px"
@@ -152,7 +154,7 @@ export default function Schedule() {
                                 >
                                     <Text
                                         color="#F06E6E"
-                                        fontSize="16px"
+                                        fontSize={isMobile ? "13px" : "16px"}
                                     >
                                         선택 삭제
                                     </Text>
@@ -160,23 +162,25 @@ export default function Schedule() {
                                 
                                 <Text
                                     fontWeight="lighter"
+
+                                    fontSize={isMobile ? "14px" : ""}
                                 >
                                     {`${selection.length}개 선택됨`}
                                 </Text>
                             </Flex>
                                 
                             <Flex
-                                gap="50px"
+                                gap={isMobile ? "" : "50px"}
                                 h="100%"
                             >
                                 <Flex
                                     h="100%"
                                     alignItems="center"
                                 
-                                    gap="70px"
+                                    gap={isMobile ? "" : "70px"}
                                 >
                                     <Text
-                                        fontSize="20px"
+                                        fontSize={isMobile ? "13px" : "20px"}
                                         whiteSpace="nowrap"
                                     >
                                         표시:
@@ -189,7 +193,7 @@ export default function Schedule() {
                                             onChange={(e) => {
                                                 setTripListCount(Number(e.target.value));
                                             }}
-                                            fontSize="20px"
+                                            fontSize={isMobile ? "13px" : "20px"}
                                         >
                                             {
                                                 tripListPageSizeList.map((count) => (
@@ -208,7 +212,7 @@ export default function Schedule() {
                                     alignItems="center"
                                 >
                                     <Text
-                                        fontSize="20px"
+                                        fontSize={isMobile ? "13px" : "20px"}
                                         
                                     >
                                         총 {items.length}
@@ -228,11 +232,11 @@ export default function Schedule() {
                                 {/* 헤더 */}
                                 <Table.Header>
                                     <Table.Row
-                                        h="90px"
+                                        h={isMobile ? "40px" : "90px"}
                                         bgColor="#EFEFEF"
-                                        fontSize="20px"
+                                        fontSize={isMobile ? "13px" : "20px"}
                                     >
-                                        <Table.ColumnHeader w="6" pl="40px">
+                                        <Table.ColumnHeader w="6" pl={isMobile ? "20px" : "40px"}>
                                             <Checkbox.Root
                                                 size="sm"
                                                 top="0.5"
@@ -252,7 +256,7 @@ export default function Schedule() {
                                         <Table.ColumnHeader>여행지</Table.ColumnHeader>
                                         <Table.ColumnHeader>취향 태그</Table.ColumnHeader>
                                         <Table.ColumnHeader textAlign="end">시작 날짜</Table.ColumnHeader>
-                                        <Table.ColumnHeader textAlign="end" pr="40px">끝 날짜</Table.ColumnHeader>
+                                        <Table.ColumnHeader textAlign="end" pr={isMobile ? "" : "40px"}>끝 날짜</Table.ColumnHeader>
                                     </Table.Row>
                                 </Table.Header>
                                 {/* 메인 데이터 공간 */}
@@ -267,7 +271,7 @@ export default function Schedule() {
                             page={nowPage}
                             onPageChange={(e) => {setNowPage(e.page)}}
                                             
-                            mt="30px"
+                            mt={isMobile ? "10px" : "30px"}
                         >
                             <ButtonGroup variant="ghost" size="sm" wrap="wrap">
                                             
@@ -277,6 +281,10 @@ export default function Schedule() {
                                         outline="none"
                                         border="0"
                                         bgColor="transparent"
+                                        _focus={{
+                                            border: "0",
+                                            outline: "none",
+                                        }}
                                     >
                                         <LuChevronLeft
                                             color="#696969"
@@ -292,6 +300,12 @@ export default function Schedule() {
                                             outline="none"
                                             border={page.value !== nowPage ? "1px solid #E0E7EE" : "0"}
                                             bgColor={page.value === nowPage ? "#E0E7EE" : "transparent"}
+                                            _focus={{
+                                                border: "0",
+                                                outline: "none",
+                                            }}
+
+                                            transition="background 0.2s ease-in-out"
                                         >
                                             {page.value}
                                         </IconButton>
@@ -304,6 +318,10 @@ export default function Schedule() {
                                         outline="none"
                                         border="0"
                                         bgColor="transparent"
+                                        _focus={{
+                                            border: "0",
+                                            outline: "none",
+                                        }}
                                     >
                                         <LuChevronRight
                                             color="#696969"

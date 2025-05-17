@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { Flex, Text, Link, Box, Image } from '@chakra-ui/react';
+import { Flex, Text, Link, Box, useBreakpointValue } from '@chakra-ui/react';
 
 import SideBar from '@/components/Mypage/SideBar';
 import Schedule from '@/components/Mypage/Schedule';
@@ -8,6 +8,8 @@ import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
 
 export default function Mypage() {
     const [page, setPage] = useState("schedule"); // schedule, user_info_edit
+
+    const sideBarWidth = useBreakpointValue({ base: "50px", md: "270px" });
     
 
     return (
@@ -20,15 +22,12 @@ export default function Mypage() {
 
             {/* 메인 */}
             <Box
-                w="calc(100% - 270px)"
+                w={`calc(100% - ${sideBarWidth})`}
                 h="100vh"
             >
                 {
                     page === "schedule" ? (
-                        <Box
-                            w="100%"
-                            h="100%"
-                        >
+                        <Box>
                             <Schedule />
                         </Box>
                     ) : page === "user_info_edit" ? (

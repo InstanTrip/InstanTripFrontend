@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Link, Text, useBreakpointValue } from "@chakra-ui/react";
 
 import RippleButton from "../Misc/RippleButton";
 import task_list_icon from "../../assets/task_list_icon.svg";
@@ -6,13 +6,17 @@ import setting_icon from "../../assets/setting_icon.svg";
 import logout_icom from "../../assets/logout_icon.svg";
 
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
+    const isMobile = useBreakpointValue({ base: true, md: false }) as boolean;
+    const sideBarWidth = useBreakpointValue({ base: "50px", md: "270px" });
+
     return (
         <Flex
             h="100%"
-            w="270px"
+            w={sideBarWidth}
             borderRight="1px solid #DADADA"
             py="40px"
             direction="column"
+            transition="all 0.2s ease-in-out"
         >
             <Box pl="50px">
                 <Link
@@ -24,6 +28,8 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                         color: "#757575",
                     }}
                     href="/"
+
+                    display={isMobile ? "none" : "block"}
                 >
                     InstanTrip.
                 </Link>
@@ -39,11 +45,12 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                 >
                     <RippleButton>
                         <Flex
-                            w="190px"
-                            h="57px"
+                            w={isMobile ? "40px" : "190px"}
+                            h={isMobile ? "40px" : "57px"}
                             bgColor={page === "schedule" ? "#E9ECF0" : ""}
                             alignItems="center"
-                            pl="20px"
+                            justifyContent={isMobile ? "center" : "flex-start"}
+                            pl={isMobile ? "" : "20px"}
                             gap="10px"
                             transition="all 0.2s ease-in-out"
                             cursor="pointer"
@@ -56,8 +63,11 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                 w="16px"
                                 h="16px"
                                 src={task_list_icon}
-                                />
-                            <Text color="#696969">
+                            />
+                            <Text
+                                color="#696969"
+                                display={isMobile ? "none" : "block"}
+                            >
                                 일정 관리
                             </Text>
                         </Flex>
@@ -75,11 +85,12 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                 >
                     <RippleButton>
                         <Flex
-                            w="190px"
-                            h="57px"
+                            w={isMobile ? "40px" : "190px"}
+                            h={isMobile ? "40px" : "57px"}
                             bgColor={page === "user_info_edit" ? "#E9ECF0" : ""}
                             alignItems="center"
-                            pl="20px"
+                            justifyContent={isMobile ? "center" : "flex-start"}
+                            pl={isMobile ? "" : "20px"}
                             gap="10px"
                             transition="all 0.2s ease-in-out"
                             cursor="pointer"
@@ -93,7 +104,10 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                 h="16px"
                                 src={setting_icon}
                             />
-                            <Text color="#696969">
+                            <Text
+                                color="#696969"
+                                display={isMobile ? "none" : "block"}
+                            >
                                 회원정보 변경
                             </Text>
                         </Flex>
@@ -111,7 +125,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                     h="57px"
                 >
                     <Box
-                        w="70%"
+                        w={isMobile ? "100%" : "70%"}
                         h="100%"
                     >
                         <Box
@@ -137,9 +151,10 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                         src={logout_icom}
                                         w="20px"
                                         h="20px"
-                                        />
+                                    />
                                     <Text
                                         color="#696969"
+                                        display={isMobile ? "none" : "block"}
                                     >
                                         로그아웃
                                     </Text>
