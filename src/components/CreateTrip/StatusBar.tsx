@@ -16,7 +16,9 @@ export default function StatusBar({ count }: { count: number }) {
         justifyContent="center"
         alignItems="center"
       >
-        <Text>
+        <Text
+          color="white"
+        >
           {isCompleted ? 
             <Image w="24px" h="20px" mt="2px" src={checkmark} /> : 
             stepNumber

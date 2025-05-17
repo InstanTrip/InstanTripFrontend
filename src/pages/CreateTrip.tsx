@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 
-import StatusBar from '@/components/TripSetting/StatusBar';
+import StatusBar from '@/components/CreateTrip/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';
-import Calender from '@/components/TripSetting/Calender';
-import Area from '@/components/TripSetting/Area';
-import Taste from '@/components/TripSetting/Taste';
+import Calender from '@/components/CreateTrip/Calender';
+import Area from '@/components/CreateTrip/Area';
+import Taste from '@/components/CreateTrip/Taste';
 
-export default function TripSetting() {
+export default function CreateTrip() {
     // 이 페이지는 여행 일정 만들기 초기 설정 페이지임
     // 여행 기간, 떠나고 싶은 지역, 취향 선택 받아야함
     // 여행 기간은 달력으로 선택
@@ -21,72 +21,66 @@ export default function TripSetting() {
         if (page < 3) setPage(page + 1);
     };
 
+    // 지역 선택
+    const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+
     return (
         <Flex
             w="100vw"
             h="100vh"
-            justifyContent="center"
             backgroundColor="#F4F4F4"
             direction="column"
             alignItems="center"
         >
-                
+
             {/* 1, 2, 3 띄워주는놈 */}
             <Flex
                 w="100%"
                 h="40px"
                 justifyContent="center"
-                mt="10px"
+                mt="30px"
+                // mt="10px"
                 // border="1px solid red"
             >
                 <StatusBar count={page} />
             </Flex>
-            
-            {/* <Box
-                mt="30px"
+
+
+            <Flex
+                my="100px"
+                h="100%"
+                alignItems="center"
             >
-                <Text
-                    color="#575757"
-                >
-                    여행 기간 선택
-                </Text>
-            </Box> */}
-
-            {page === 1 && (
-                <>
-                    <Text color="#575757" mt="30px" fontSize="20px">
-                        여행 기간 선택
-                    </Text>
-                    <Box mt="100px">
-                        <Calender />
-                    </Box>
-                </>
-            )}
-
-            {page === 2 && (
-                <>
-                    <Text color="#575757" mt="30px" fontSize="20px">
-                        떠나고 싶은 지역
-                    </Text>
-                    <Box 
-                      mt="100px"
-                      maxH="60px"
-                    >
-                      <Area />
-                    </Box>
-                </>
-            )}
+                {/* 여행 기간 선택 */}
+                {page === 1 && (
+                    <Calender />
+                )}
+                
+                {page === 2 && (
+                    <Area
+                        selectedAreas={selectedAreas}
+                        setSelectedAreas={setSelectedAreas}
+                    />
+                )}
+            </Flex>
 
             {/* 다음 버튼 */}
             {page < 3 && (
                 <Button
-                    mt="80px"
                     fontSize="20px"
                     backgroundColor="#F4F4F4"
                     color="#575757"
                     onClick={handleNextPage}
+                    mb="30px"
+                    outline="none"
+                    border="none"
+
+                    _focus={{
+                        border: "none",
+                        outline: "none",
+                    }}
                 >
-                    다음⏵
+                    다음 ⏵
                 </Button>
             )}
 
@@ -105,7 +99,7 @@ export default function TripSetting() {
                         backgroundColor="#F4F4F4"
                         color="#575757"
                     >
-                        여행 일정 생성하기⏵
+                        여행 일정 생성하기 ⏵
                     </Button>
                 </>
             )}

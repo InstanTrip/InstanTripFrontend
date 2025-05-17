@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import Background from '../assets/login_pic.png';
 
-export default function Login() {
+export default function LoginPage() {
     // 로그인 페이지
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');

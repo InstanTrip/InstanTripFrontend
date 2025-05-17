@@ -81,6 +81,8 @@ export default function AboutTrip() {
         setLocChangeModalSearch("");
     }
 
+    // 모든 모달창 닫는 함수
+    // 모달창 닫는 함수는 모두 이 함수를 사용하게 함 - 충돌 방지
     const closeModal = () => {
         setLocChangeModalIsOpen(false);
         setAccessModalIsOpen(false);
@@ -397,7 +399,7 @@ export default function AboutTrip() {
                         outline="none"
                         textDecoration="none"
                         href="/"
-                        
+
                         _hover={{
                             textDecoration: "none",
                             color: "#585858",

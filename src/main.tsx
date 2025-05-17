@@ -7,11 +7,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css'
 
 import Main from './pages/Main';
-import TripSetting from './pages/TripSetting';
+import CreateTrip from './pages/CreateTrip';
 import Mypage from './pages/Mypage';
-import ShowTrip from './pages/ShowTrip';
 import AboutTrip from './pages/AboutTrip';
-import Login from './pages/LoginPage';
 
 // React Query 클라이언트 생성
 const queryClient = new QueryClient();
@@ -27,19 +25,13 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<Main />} />
 
             {/* 여행 생성 */}
-            <Route path="/create" element={<TripSetting />} />
+            <Route path="/create" element={<CreateTrip />} />
 
             {/* 마이페이지 */}
             <Route path="/mypage" element={<Mypage />} />
             
             {/* 여행 출력 */}
-            <Route path="/showtrip" element={<ShowTrip />} />
-
-            {/* 테스트 */}
-            <Route path="/test" element={<AboutTrip />} />
-
-            {/* 로그인 페이지 */}
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/aboutrip" element={<AboutTrip />} />
           </Routes>
         </Router>
       </Provider>
