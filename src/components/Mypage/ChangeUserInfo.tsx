@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Flex, Grid, GridItem, Box, Text, Input, Button } from '@chakra-ui/react';
 
 export default function ChangeUserInfo() {
-    const [userId, setUserId] = useState("testID");
     const [userEmail, setUserEmail] = useState("testEmail");
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordRetry, setNewPasswordRetry] = useState("");

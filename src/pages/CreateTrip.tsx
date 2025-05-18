@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
+import { useState } from 'react';
+import { Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
 
 import StatusBar from '@/components/CreateTrip/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';

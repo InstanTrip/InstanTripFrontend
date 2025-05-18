@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from 'react-modal';
 import { Box, Flex, Text, Image, Input, Link, useBreakpointValue } from "@chakra-ui/react";
 
@@ -11,8 +11,6 @@ import TriangleArrow from "@/assets/triangle_arrow.svg";
 import MapBox from "@/components/Map/MapBox";
 
 import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
-import { LuZoomIn } from 'react-icons/lu';
-import { is } from 'date-fns/locale';
 
 export default function AboutTrip() {
     // 지도에 표시할 장소 데이터

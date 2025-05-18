@@ -1,6 +1,5 @@
-import React from 'react';
 import { useState } from 'react';
-import { Flex, Text, Link, Box, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 
 import SideBar from '@/components/Mypage/SideBar';
 import Schedule from '@/components/Mypage/Schedule';

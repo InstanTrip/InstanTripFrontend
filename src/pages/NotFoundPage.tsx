@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Flex, Heading, Text, Button, VStack, Image, useBreakpointValue } from '@chakra-ui/react';
 
 import River from '@/assets/river.webp';
