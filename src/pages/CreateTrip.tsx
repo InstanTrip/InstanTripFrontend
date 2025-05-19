@@ -1,5 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import { GridLoader } from 'react-spinners';
+import { useNavigate } from 'react-router-dom';
+
+import { fetchCreateTrip } from '@/utils/Api';
+import { FormatDate } from '@/utils/FormatDate';
 
 import StatusBar from '@/components/CreateTrip/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';
@@ -18,12 +24,29 @@ export default function CreateTrip() {
 
     // 다음 페이지로 이동
     const handleNextPage = () => {
+        if (page === 1) {
+            // 여행 기간 선택 페이지에서 다음 버튼 클릭 시
+            if (!startDate || !endDate) {
+                alert("여행 기간을 선택해주세요.");
+                return;
+            }
+        }
+        if (page === 2) {
+            // 떠나고 싶은 지역 페이지에서 다음 버튼 클릭 시
+            if (selectedAreas.length === 0) {
+                alert("떠나고 싶은 지역을 1개 지역 이상 선택해주세요.");
+                return;
+            }
+        }
         if (page < 3) setPage(page + 1);
     };
+
+    const navigate = useNavigate();
 
     // 여행 기간 선택
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [endDate, setEndDate] = useState<Date | null>(null);
+    const [tripPeriod, setTripPeriod] = useState<number>(0);
 
     // 지역 선택
     const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
@@ -33,6 +56,47 @@ export default function CreateTrip() {
     const [foodTaste, setFoodTaste] = useState<string[]>([]);
     const [accommodationTaste, setAccommodationTaste] = useState<string[]>([]);
 
+    // 여행 기간 계산
+    useEffect(() => {
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            setTripPeriod(diffDays);
+        }
+    }, [startDate, endDate]);
+
+    const [tripData, setTripData] = useState({});
+
+    const { data: results , isLoading: isLoading, error: tripError, refetch: refetchCreateTrip } = useQuery({
+        queryKey: [tripData],
+        queryFn: () => fetchCreateTrip(tripData),
+        enabled: false,
+    });
+
+    const createTrip = () => {
+        // 여행 일정 생성 API 호출
+        setTripData({
+            start_date: FormatDate(startDate),
+            end_date: FormatDate(endDate),
+            location: selectedAreas,
+            accommodation_taste: accommodationTaste,
+            destination_taste: destinationTaste,
+            restaurant_taste: foodTaste,
+        });
+
+        refetchCreateTrip();
+    }
+
+    // 여행 일정이 생성되었을 경우
+    useEffect(() => {
+        if (results) {
+            console.log("여행 일정 생성 결과", results);
+
+            navigate(`/aboutrip?id=${results.data.plan_id}`);
+        }
+    }, [results]);
 
     const gap = useBreakpointValue({ base: "15px", md: "70px" });
 
@@ -44,6 +108,24 @@ export default function CreateTrip() {
             direction="column"
             alignItems="center"
         >
+            <Flex
+                position="fixed"
+                top={0}
+                left={0}
+                width="100vw"
+                height="100vh"
+                backgroundColor="rgba(0, 0, 0, 0.7)"
+                zIndex={9999}
+                display={isLoading ? "flex" : "none"}
+                justifyContent="center"
+                alignItems="center"
+
+                transition="all 0.3s ease"
+            >
+                <GridLoader
+                    color="white"
+                />
+            </Flex>
 
             {/* 1, 2, 3 띄워주는놈 */}
             <Flex
@@ -72,7 +154,6 @@ export default function CreateTrip() {
                 }
             </Flex>
 
-
             <Flex
                 my={gap}
                 h="100%"
@@ -96,6 +177,7 @@ export default function CreateTrip() {
                 
                 {page === 2 && (
                     <Area
+                        tripPeriod={tripPeriod}
                         selectedAreas={selectedAreas}
                         setSelectedAreas={setSelectedAreas}
                     />
@@ -139,7 +221,7 @@ export default function CreateTrip() {
                     fontSize="20px"
                     backgroundColor="#F4F4F4"
                     color="#575757"
-                    onClick={handleNextPage}
+                    onClick={createTrip}
                     mb="30px"
                     outline="none"
                     border="none"

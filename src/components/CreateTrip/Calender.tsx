@@ -36,6 +36,7 @@ export default function Calender({
                 onChange={onChange}
                 startDate={startDate}
                 endDate={endDate}
+                minDate={new Date()}
                 selectsRange
                 inline
             />

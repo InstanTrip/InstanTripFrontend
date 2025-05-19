@@ -3,17 +3,30 @@ import { Flex, Button, Grid, Text, useBreakpointValue } from '@chakra-ui/react';
 
 import areas from '@/data/areas.json';
 
-export default function Area({ selectedAreas, setSelectedAreas }: { selectedAreas: string[], setSelectedAreas: React.Dispatch<React.SetStateAction<string[]>> }) {
-    const handleSelectArea = (area: string) => {
-        if (selectedAreas.includes(area)) {
+export default function Area({ tripPeriod, selectedAreas, setSelectedAreas }: { tripPeriod: number, selectedAreas: string[], setSelectedAreas: React.Dispatch<React.SetStateAction<string[]>> }) {
+    const handleSelectArea = (region: string, area: string) => {
+        let ar = region + " " + area;
+        if (region === "특별/광역시") {
+            // 특별/광역시는 지역명만 추가
+            ar = area;
+        }
+        if (selectedAreas.includes(ar)) {
             // 이미 선택된 경우 제거
-            setSelectedAreas(selectedAreas.filter((item) => item !== area));
+            setSelectedAreas(selectedAreas.filter((item) => item !== ar));
         } else {
             // 선택되지 않은 경우 추가
-            setSelectedAreas([...selectedAreas, area]);
+            setSelectedAreas([...selectedAreas, ar]);
         }
     };
 
+    const isInclude = (region: string, area: string) => {
+        let ar = region + " " + area;
+        if (region === "특별/광역시") {
+            // 특별/광역시는 지역명만 추가
+            ar = area;
+        }
+        return selectedAreas.includes(ar);
+    }
 
     const lineLen = useBreakpointValue({ base: 3, md: 4, lg: 5 });
     const itemWidth = useBreakpointValue({ base: "100px", md: "150px" });
@@ -40,9 +53,9 @@ export default function Area({ selectedAreas, setSelectedAreas }: { selectedArea
                         {cities.map((city, idx) => (
                             <Button
                                 key={`${city}-${idx}`} // 중복된 도시명 방지
-                                onClick={() => handleSelectArea(city)}
-                                backgroundColor={selectedAreas.includes(city) ? "#93E2FF" : "#E9ECF0"}
-                                color={selectedAreas.includes(city) ? "white" : "#575757"}
+                                onClick={() => handleSelectArea(region, city)}
+                                backgroundColor={isInclude(region, city) ? "#93E2FF" : "#E9ECF0"}
+                                color={isInclude(region, city) ? "white" : "#575757"}
                                 borderRadius="12px"
                                 width={itemWidth}
                                 fontSize={itemFontSize}
@@ -59,6 +72,9 @@ export default function Area({ selectedAreas, setSelectedAreas }: { selectedArea
                                     border: "none",
                                     outline: "none",
                                 }}
+
+                                disabled={selectedAreas.length >= tripPeriod && !isInclude(region, city)}
+                                cursor={selectedAreas.length >= tripPeriod && !isInclude(region, city) ? "not-allowed" : "pointer"}
 
                             >
                                 {city}

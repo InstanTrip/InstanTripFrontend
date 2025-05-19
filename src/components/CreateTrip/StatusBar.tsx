@@ -16,11 +16,11 @@ export default function StatusBar({ count, setPage }: { count: number, setPage: 
                 justifyContent="center"
                 alignItems="center"
 
-                onClick={() => {
-                    if (stepNumber <= count) {
-                        setPage(stepNumber);
-                    }
-                }}
+                // onClick={() => {
+                //     if (stepNumber <= count) {
+                //         setPage(stepNumber);
+                //     }
+                // }}
             >
                 <Text
                     color="white"

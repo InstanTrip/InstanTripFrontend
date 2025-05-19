@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 import SideBar from '@/components/Mypage/SideBar';
 import Schedule from '@/components/Mypage/Schedule';
@@ -9,7 +10,18 @@ export default function Mypage() {
     const [page, setPage] = useState("schedule"); // schedule, user_info_edit
 
     const sideBarWidth = useBreakpointValue({ base: "50px", md: "270px" });
-    
+
+    const navigate = useNavigate();
+
+    const goTo404 = () => {
+        navigate("/404");
+    }
+
+    useEffect(() => {
+        if (page !== "schedule" && page !== "user_info_edit") {
+            goTo404();
+        }
+    }, [page]);
 
     return (
         <Flex
@@ -34,9 +46,7 @@ export default function Mypage() {
                             <ChangeUserInfo />
                         </Box>
                     ) : (
-                        // 404 에러 페이지
-                        <Box>
-                        </Box>
+                        null
                     )
                 }
             </Box>
