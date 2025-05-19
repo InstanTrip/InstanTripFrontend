@@ -44,7 +44,7 @@ export default function CreateTrip() {
     const navigate = useNavigate();
 
     // 여행 기간 선택
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
+    const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [tripPeriod, setTripPeriod] = useState<number>(0);
 
@@ -67,27 +67,22 @@ export default function CreateTrip() {
         }
     }, [startDate, endDate]);
 
-    const [tripData, setTripData] = useState({});
-
     const { data: results , isLoading: isLoading, error: tripError, refetch: refetchCreateTrip } = useQuery({
-        queryKey: [tripData],
-        queryFn: () => fetchCreateTrip(tripData),
-        enabled: false,
-    });
-
-    const createTrip = () => {
-        // 여행 일정 생성 API 호출
-        setTripData({
+        queryKey: [],
+        queryFn: () => fetchCreateTrip({
             start_date: FormatDate(startDate),
             end_date: FormatDate(endDate),
             location: selectedAreas,
             accommodation_taste: accommodationTaste,
             destination_taste: destinationTaste,
             restaurant_taste: foodTaste,
-        });
+        }),
+        enabled: false,
+    });
 
+    const createTrip = () => {
         refetchCreateTrip();
-    }
+    };
 
     // 여행 일정이 생성되었을 경우
     useEffect(() => {
@@ -221,7 +216,7 @@ export default function CreateTrip() {
                     fontSize="20px"
                     backgroundColor="#F4F4F4"
                     color="#575757"
-                    onClick={createTrip}
+                    onClick={() => {createTrip()}}
                     mb="30px"
                     outline="none"
                     border="none"
