@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Flex, Box, Text, Link, useBreakpointValue } from "@chakra-ui/react";
 import { useQuery } from '@tanstack/react-query'
 
-import { getUserData } from "@/utils/Api";
+import { getUserData, logout } from "@/utils/Api";
 
 import Background from "../assets/background.webp";
 
@@ -18,15 +18,23 @@ export default function Main() {
     });
 
     useEffect(() => {
-        console.log("results", results);
         if (results) {
             if (results.status === 200) {
                 setIsLogin(true);
             } else {
+                if (isLogin) {
+                    alert("로그아웃 되었습니다.");
+                }
                 setIsLogin(false);
             }
         }
     }, [results]);
+
+    const handleLogout = () => {
+        logout();
+        // 새로고침
+        window.location.reload();
+    }
 
     // 반응형 디자인을 위한 세부 조정
 
@@ -102,20 +110,22 @@ export default function Main() {
                             >
                                 |
                             </Text>
-                            <Link
+                            <Text
                                 fontSize={loginFontSize}
                                 color="white"
                                 textDecoration="none"
-                                href="/back/logout"
                                 outline="none"
                                 _hover={{
                                     textDecoration: "none",
                                     color: "white",
                                     outline: "none"
                                 }}
+
+                                onClick={handleLogout}
+                                cursor="pointer"
                             >
                                 로그아웃
-                            </Link>
+                            </Text>
                         </Flex>
                     ) : (
                         <Flex

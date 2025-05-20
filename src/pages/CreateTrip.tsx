@@ -86,12 +86,17 @@ export default function CreateTrip() {
 
     // 여행 일정이 생성되었을 경우
     useEffect(() => {
+        if (tripError) {
+            alert("여행 일정 생성을 하려면 로그인이 필요합니다.");
+            navigate("/oauth2/authorization/cognito?prompt=login")
+            return;
+        }
         if (results) {
             console.log("여행 일정 생성 결과", results);
 
             navigate(`/aboutrip?id=${results.data.plan_id}`);
         }
-    }, [results]);
+    }, [results, tripError]);
 
     const gap = useBreakpointValue({ base: "15px", md: "70px" });
 
@@ -103,6 +108,7 @@ export default function CreateTrip() {
             direction="column"
             alignItems="center"
         >
+            {/* 로딩 스피너 */}
             <Flex
                 position="fixed"
                 top={0}
@@ -114,8 +120,6 @@ export default function CreateTrip() {
                 display={isLoading ? "flex" : "none"}
                 justifyContent="center"
                 alignItems="center"
-
-                transition="all 0.3s ease"
             >
                 <GridLoader
                     color="white"

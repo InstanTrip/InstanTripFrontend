@@ -1,5 +1,7 @@
 import { Box, Flex, Image, Link, Text, useBreakpointValue } from "@chakra-ui/react";
 
+import { logout } from "@/utils/Api";
+
 import RippleButton from "../Misc/RippleButton";
 import task_list_icon from "../../assets/task_list_icon.svg";
 import setting_icon from "../../assets/setting_icon.svg";
@@ -8,6 +10,13 @@ import logout_icom from "../../assets/logout_icon.svg";
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
     const isMobile = useBreakpointValue({ base: true, md: false }) as boolean;
     const sideBarWidth = useBreakpointValue({ base: "50px", md: "270px" });
+
+
+    const handleLogout = () => {
+        logout();
+        // 로그아웃 후 강제로 홈으로
+        window.location.href = "/";
+    }
 
     return (
         <Flex
@@ -146,6 +155,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                     }}
                                     transition="all 0.2s ease-in-out"
                                     cursor="pointer"
+                                    onClick={handleLogout}
                                 >
                                     <Image
                                         src={logout_icom}

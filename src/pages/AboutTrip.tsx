@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
 import { Box, Flex, Text, Image, Input, Link, useBreakpointValue } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
@@ -21,6 +22,7 @@ export default function AboutTrip() {
         [36.1284582, 128.3307228]
     ]);
 
+    const navigate = useNavigate();
     
     // 장소 변경 모달창 관련 변수
     const [ locChangeModalIsOpen, setLocChangeModalIsOpen ] = useState(false);

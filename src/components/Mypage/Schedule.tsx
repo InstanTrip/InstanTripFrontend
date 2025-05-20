@@ -1,14 +1,34 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, use } from "react"
 import { Flex, Text, Table, Checkbox, Pagination, ButtonGroup, IconButton, NativeSelect, useBreakpointValue } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import NotFoundSchedule from "./NotFoundSchedule";
+
+import { fetchTripList, rmTrip } from "@/utils/Api";
+
+interface Taste {
+    accommodation_taste: string[];
+    destination_taste: string[];
+    restaurant_taste: string[];
+}
+
+interface Trip {
+    plan_id: string;
+    location: string[];
+    taste: Taste;
+    plan_start: string;
+    plan_end: string;
+}
 
 export default function Schedule() {
     const isMobile = useBreakpointValue({ base: true, md: false });
 
+    const navigate = useNavigate();
+
     // 선택된 여행들 아이디 값
-    const [selection, setSelection] = useState<number[]>([]);
+    const [selection, setSelection] = useState<string[]>([]);
     // 한번에 보여줄 여행 일정 개수
     const [tripListCount, setTripListCount] = useState<number>(15);
     // 현재 페이지
@@ -21,49 +41,66 @@ export default function Schedule() {
     const tripListPageSizeList = [15, 30, 50];
 
     // 여행 일정 목록
-    const [items, setItems] = useState([
-        { id: 1, travel_destination: "1안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-01", end_date: "2023-10-02", },
-        { id: 2, travel_destination: "2안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-02", end_date: "2023-10-03", },
-        { id: 3, travel_destination: "3안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-03", end_date: "2023-10-07", },
-        { id: 4, travel_destination: "4안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-04", end_date: "2023-10-06", },
-        { id: 5, travel_destination: "5안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 6, travel_destination: "6안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 7, travel_destination: "7안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 8, travel_destination: "8안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 9, travel_destination: "9안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 10, travel_destination: "10서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 11, travel_destination: "11서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 12, travel_destination: "12서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 13, travel_destination: "13서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 14, travel_destination: "14서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 15, travel_destination: "15서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 16, travel_destination: "16서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 17, travel_destination: "17서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 18, travel_destination: "18서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 19, travel_destination: "19서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 20, travel_destination: "20서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 21, travel_destination: "21서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 22, travel_destination: "22서울시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 23, travel_destination: "23안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 24, travel_destination: "24안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 25, travel_destination: "25안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 26, travel_destination: "26안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 27, travel_destination: "27안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 28, travel_destination: "28안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 29, travel_destination: "29안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 30, travel_destination: "30안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 31, travel_destination: "31안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-        { id: 32, travel_destination: "32안동시, 구미시", taste: ["치킨", "술", "바다"], start_date: "2023-10-05", end_date: "2023-10-10", },
-    ]);
+    const [items, setItems] = useState<Trip[]>([]);
 
+    const { data: results, isLoading: isLoading, error: tripError, refetch: refetchTripList } = useQuery({
+        queryKey: [],
+        queryFn: () => fetchTripList(),
+        enabled: true,
+    });
+
+    const removeMutation = useMutation({
+        mutationFn: async (ids: string[]) => {
+            // 선택된 모든 여행 일정에 대해 순차적으로 삭제 요청
+            const promises = ids.map(id => rmTrip(id));
+            return Promise.all(promises);
+        },
+        onSuccess: () => {
+            alert("선택한 여행 일정이 삭제되었습니다.");
+            setSelection([]); // 선택 초기화
+            refetchTripList(); // 목록 새로고침
+        },
+        onError: () => {
+            alert("여행 일정 삭제에 실패했습니다.");
+        }
+    });
+
+    useEffect(() => {
+        if (tripError) {
+            alert("로그인이 필요합니다!");
+            navigate("/");
+        }
+        if (results) {
+            if (results.data.Error) {
+                setItems([]);
+                return;
+            }
+            setItems(results.data);
+        }
+    }, [results, tripError]);
+
+    const rmSelectedTrip = () => {
+        if (selection.length === 0) {
+            alert("삭제할 여행을 선택해주세요.");
+            return;
+        }
+        
+        if (confirm("선택한 여행 일정을 삭제하시겠습니까?")) {
+            removeMutation.mutate(selection);
+        }
+    }
+
+
+
+    
     const hasSelection = selection.length > 0;
     const indeterminate = hasSelection && selection.length < Math.min(items.length, tripListCount);
 
     useEffect(() => {
         setRows(items.slice((nowPage - 1) * tripListCount, Math.min(nowPage * tripListCount, items.length)).map((item) => (
             <Table.Row
-                key={item.id}
-                data-selected={selection.includes(item.id) ? "" : undefined}
+                key={item.plan_id}
+                data-selected={selection.includes(item.plan_id) ? "" : undefined}
                 bgColor="transparent"
                 h={isMobile ? "40px" : "90px"}
                 fontSize={isMobile ? "13px" : "20px"}
@@ -74,12 +111,12 @@ export default function Schedule() {
                         pl={isMobile ? "10px" : "30px"}
                         top="0.5"
                         aria-label="Select row"
-                        checked={selection.includes(item.id)}
+                        checked={selection.includes(item.plan_id)}
                         onCheckedChange={(changes) => {
                             setSelection((prev) =>
                                 changes.checked
-                                  ? [...prev, item.id]
-                                  : selection.filter((id) => id !== item.id),
+                                  ? [...prev, item.plan_id]
+                                  : selection.filter((id) => id !== item.plan_id),
                             )
                         }}
                     >
@@ -87,11 +124,37 @@ export default function Schedule() {
                         <Checkbox.Control />
                     </Checkbox.Root>
                 </Table.Cell>
-
-                <Table.Cell>{item.travel_destination}</Table.Cell>
-                <Table.Cell>{item.taste.join(", ")}</Table.Cell>
-                <Table.Cell textAlign="end">{item.start_date}</Table.Cell>
-                <Table.Cell textAlign="end" pr={isMobile ? "5px" : "40px"}>{item.end_date}</Table.Cell>
+                <Table.Cell
+                    onClick={() => {
+                        navigate(`/aboutrip?id=${item.plan_id}`);
+                    }}
+                
+                    cursor="pointer"
+                >{item.location.join(", ")}</Table.Cell>
+                <Table.Cell
+                    onClick={() => {
+                        navigate(`/aboutrip?id=${item.plan_id}`);
+                    }}
+                
+                    cursor="pointer"
+                >{item.taste["accommodation_taste"].length > 0 ? `${item.taste["accommodation_taste"][0]}, ` : null}{item.taste["destination_taste"].length > 0 ? `${item.taste["destination_taste"][0]}, ` : null}{item.taste["restaurant_taste"].length > 0 ? `${item.taste["restaurant_taste"][0]}, ` : null}</Table.Cell>
+                <Table.Cell
+                    onClick={() => {
+                        navigate(`/aboutrip?id=${item.plan_id}`);
+                    }}
+                
+                    cursor="pointer"
+                    textAlign="end"
+                >{item.plan_start}</Table.Cell>
+                <Table.Cell
+                    onClick={() => {
+                        navigate(`/aboutrip?id=${item.plan_id}`);
+                    }}
+                
+                    cursor="pointer"
+                    textAlign="end"
+                    pr={isMobile ? "5px" : "40px"}
+                >{item.plan_end}</Table.Cell>
             </Table.Row>
         )))
     }
@@ -151,6 +214,8 @@ export default function Schedule() {
                                     _hover={{
                                         bgColor: "#FFCACA",
                                     }}
+
+                                    onClick={rmSelectedTrip}
                                 >
                                     <Text
                                         color="#F06E6E"
@@ -244,7 +309,7 @@ export default function Schedule() {
                                                 checked={indeterminate ? "indeterminate" : selection.length > 0}
                                                 onCheckedChange={(changes) => {
                                                     setSelection (
-                                                        changes.checked ? items.slice((nowPage - 1) * tripListCount, Math.min(nowPage * tripListCount, items.length)).map((item) => item.id) : [],
+                                                        changes.checked ? items.slice((nowPage - 1) * tripListCount, Math.min(nowPage * tripListCount, items.length)).map((item) => item.plan_id) : [],
                                                     )
                                                 }}
                                             >
