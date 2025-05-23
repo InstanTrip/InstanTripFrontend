@@ -120,8 +120,8 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
       id="map"
       center={{
         // 지도의 중심좌표
-        lat: 36.1460625,
-        lng: 128.3934375,
+        lat: locationData[0][0],
+        lng: locationData[0][1]
       }}
       style={{
         // 지도의 크기

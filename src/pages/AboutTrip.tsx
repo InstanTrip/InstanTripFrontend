@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Modal from 'react-modal';
-import { Box, Flex, Text, Image, Input, Link, useBreakpointValue } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import useWebSocket from 'react-use-websocket';
+import { useQuery } from '@tanstack/react-query';
+import { debounce } from 'lodash';
 
 import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
@@ -12,76 +15,123 @@ import TriangleArrow from "@/assets/triangle_arrow.svg";
 import MapBox from "@/components/Map/MapBox";
 
 import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
+import { getLocationData, searchLocation } from "@/utils/Api";
+import { FormatDate } from '@/utils/FormatDate';
+
+interface Node {
+    destination_type: string;
+    destination_id: string;
+    memo: string;
+}
+
+interface Nodes {
+    location: string;
+    date: string;
+    nodes: Node[];
+}
+
+interface User {
+    name: string;
+    color: string;
+    text_color: string;
+}
+
+interface SearchResult {
+    index: string;
+    id: string;
+    title: string;
+    image: string[] | null;
+    address: string;
+    postal_code: string;
+    score: number;
+}
 
 export default function AboutTrip() {
-    // 지도에 표시할 장소 데이터
+    // 웹소켓으로 받아온 데이터
+    const [ locationNodes, setLocationNodes ] = useState<Nodes[]>([]);
+
+    // 페이지에 표시할 장소 데이터
+    const [ locationNodesForPage, setLocationNodesForPage ] = useState<any[][]>([]);
+
     // [위도, 경도] 형식의 배열로 저장
     const [ locationData, setLocationData ] = useState<number[][]>([
         [36.1460625, 128.3934375],
-        [36.140882020156, 128.419129591913],
-        [36.1284582, 128.3307228]
     ]);
 
     const navigate = useNavigate();
+
+    // URL에서 id 파라미터 가져오기
+    const [ searchParams ] = useSearchParams();
+    const id = searchParams.get('id');
     
     // 장소 변경 모달창 관련 변수
     const [ locChangeModalIsOpen, setLocChangeModalIsOpen ] = useState(false);
     const [ locChangeModalSearch, setLocChangeModalSearch ] = useState("");
+    // 현재 장소의 인덱스
+    const [ selectLocIndex, setSelectLocIndex ] = useState<number>(0);
+    // 검색결과
+    const [ locChangeModalSearchResult, setLocChangeModalSearchResult ] = useState<SearchResult[]>([]);
     
     // 일정 공유 모달창 관련 변수
     const [ accessModalIsOpen, setAccessModalIsOpen ] = useState(false);
 
-    const [ accessUserList, setAccessUserList ] = useState([
-        {
-            name: "안재범",
-            email: "ajb@instantrip.ajb.kr",
-            color: NicknameToHexColor("안재범")["color"],
-            text_color: NicknameToHexColor("안재범").textColor,
-        },
-        {
-            name: "김태완",
-            email: "ktw@instantrip.ajb.kr",
-            color: NicknameToHexColor("김태완").color,
-            text_color: NicknameToHexColor("김태완").textColor,
-        },
-        {
-            name: "이동희",
-            email: "lee@instantrip.ajb.kr",
-            color: NicknameToHexColor("이동희").color,
-            text_color: NicknameToHexColor("이동희").textColor,
-        },
-        {
-            name: "박수현",
-            email: "qtg@instantrip.ajb.kr",
-            color: NicknameToHexColor("박수현").color,
-            text_color: NicknameToHexColor("박수현").textColor,
-        },
-        {
-            name: "노현우",
-            email: "qtg@instantrip.ajb.kr",
-            color: NicknameToHexColor("노현우").color,
-            text_color: NicknameToHexColor("노현우").textColor,
-        }
-    ]);
+    // 엑세스 권한이 있는 사용자 목록
+    const [ accessUserList, setAccessUserList ] = useState<User[]>([]);
     
     // 날짜 관련 변수
-    const [ date, setDate ] = useState<Date>(new Date("2025-10-01"));
+    const [ date, setDate ] = useState<Date>(new Date());
     const dayUp = () => {
+        // 날짜를 하루 올림
+        // maxDate보다 크면 안됨
         const newDate = new Date(date);
         newDate.setDate(newDate.getDate() + 1);
-        setDate(newDate);
+        if (newDate <= maxDate) {
+            setDate(newDate);
+        }
     }
     const dayDown = () => {
+        // 날짜를 하루 내림
+        // minDate보다 작으면 안됨
         const newDate = new Date(date);
         newDate.setDate(newDate.getDate() - 1);
-        setDate(newDate);
+        if (newDate >= minDate) {
+            setDate(newDate);
+        }
+    }
+    const [ minDate, setMinDate] = useState<Date>(new Date());
+    const [ maxDate, setMaxDate] = useState<Date>(new Date());
+    const [ dateIndex, setDateIndex] = useState<number>(0);
+    useEffect(() => {
+        // 날짜가 바뀔 때마다 index 바꿈
+        const newDate = new Date(date);
+        const newDateIndex = locationNodes.findIndex((node) => node.date === newDate.toISOString().split("T")[0]);
+        setDateIndex(newDateIndex);
+    }, [date]);
+
+    // 공유 URL 코드
+    const [ inviteCode, setInviteCode ] = useState<string>("");
+    // 클립보드에 링크 복사 Alert 창 띄움
+    const [showAlert, setShowAlert] = useState(false);
+    const handleCopyClipBoard = async (text: string) => {
+	    try {
+	    	await navigator.clipboard.writeText(text);
+	    	setShowAlert(true);
+        
+            // 3초 후 자동으로 숨김
+            setTimeout(() => {
+                setShowAlert(false);
+            }, 3000);
+	    } catch (err) {
+	    	console.log(err);
+	    }
     }
 
+    // 모달창 띄워서 새 장소 받음, 모달창 띄우는 코드
     const changeLocation = (index: number) => {
-        // 모달창 띄워서 새 장소 받음, 모달창 띄우는 코드
-
-        setLocChangeModalIsOpen(true);
         setLocChangeModalSearch("");
+        setSelectLocIndex(index);
+        
+        setLocChangeModalIsOpen(true);
     }
 
     // 모든 모달창 닫는 함수
@@ -89,7 +139,162 @@ export default function AboutTrip() {
     const closeModal = () => {
         setLocChangeModalIsOpen(false);
         setAccessModalIsOpen(false);
+        setLocChangeModalSearchResult([]);
+        setLocChangeModalSearch("");
     }
+
+
+
+
+
+
+
+    // 검색
+    const { data: searchResults , isLoading: searchIsLoading, error: searchTripError, refetch: refetchSearchCreateTrip } = useQuery({
+        queryKey: [],
+        queryFn: () => searchLocation(
+            locationData[selectLocIndex][0],
+            locationData[selectLocIndex][1],
+            locChangeModalSearch
+        ),
+        enabled: false,
+        // refetchOnWindowFocus: false,
+    });
+    // 검색 결과가 있을 때마다 모달창에 표시
+    useEffect(() => {
+        if (searchResults) {
+            console.log("검색 결과", searchResults);
+            setLocChangeModalSearchResult(searchResults);
+        }
+    }, [searchResults]);
+
+    // 300ms 디바운스 적용
+    const debouncedSearch = useRef(debounce(() => {
+        refetchSearchCreateTrip();
+    }, 300)).current;
+    useEffect(() => {
+        if (locChangeModalSearch.length >= 2) {
+            debouncedSearch();
+        } else {
+            setLocChangeModalSearchResult([]);
+        }
+    }, [locChangeModalSearch, debouncedSearch]);
+
+
+
+
+    // 장소 교체
+    const changeLocationInModal = (destination_type: string, destination_id: string) => {
+        closeModal();
+
+        if (readyState === WebSocket.OPEN) {
+            sendMessage(JSON.stringify({
+                message_type: "UPDATE",
+                date: FormatDate(date),
+                index: selectLocIndex,
+                destination_type: destination_type,
+                destination_id: destination_id,
+                memo: ""
+            }));
+        }
+    }
+
+
+
+
+
+
+
+
+    // 웹소켓 연결
+    const socketUrl = `wss://instantrip.ajb.kr/ws/trip?tripId=${id}`;
+    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+        onOpen: () => console.log('WebSocket connection opened'),
+        onClose: () => console.log('WebSocket connection closed'),
+        onError: (event) => console.error('WebSocket error:', event),
+        shouldReconnect: (closeEvent) => true,
+    });
+
+    useEffect(() => {
+        // 웹소켓 연결이 성공적으로 이루어졌을 때 메시지 전송
+        if (readyState === WebSocket.OPEN) {
+            sendMessage(JSON.stringify({ message_type: "JOIN" }));
+        }
+    }, [readyState]);
+
+    // 웹소켓에서 받은 메시지 처리
+    useEffect(() => {
+        if (lastMessage !== null) {
+            const data = JSON.parse(lastMessage.data);
+            if (data.type === "JOIN" || data.type === "UPDATE") {
+                const plan = data.plan;
+                console.log("WebSocket message received:", plan);
+
+                // 장소 데이터 업데이트
+                setLocationNodes(plan.destinations);
+                // 엑세스 권한이 있는 사용자 목록 업데이트
+                setAccessUserList(plan.participants.map((user: string) => ({
+                    name: user,
+                    color: NicknameToHexColor(user)["color"],
+                    text_color: NicknameToHexColor(user).textColor,
+                })));
+                // 날짜 범위 설정
+                setMinDate(new Date(plan.plan_start));
+                setDate(new Date(plan.plan_start));
+                setMaxDate(new Date(plan.plan_end));
+
+                // 공유 URL 코드 설정
+                setInviteCode(plan.invite_code);
+            }
+        }
+    }, [lastMessage]);
+
+    // 장소 데이터가 변경될 때마다 페이지에 표시할 장소 데이터 업데이트
+    useEffect(() => {
+        const fetchLocations = async () => {
+            if (locationNodes.length > 0) {
+                let resTempLocData: any[][] = [];
+
+                for (let n of locationNodes) {
+                    let tempLocData: any[] = [];
+
+                    for (let node of n.nodes) {
+                        tempLocData.push({
+                            type: node.destination_type,
+                            id: node.destination_id
+                        });
+                    }
+
+                    console.log("장소 데이터 요청", tempLocData);
+                    try {
+                        const response = await getLocationData(tempLocData);
+                        console.log("장소 데이터", response.data);
+                        resTempLocData.push(response.data);
+                    } catch (error) {
+                        console.error("장소 데이터 요청 실패:", error);
+                    }
+                }
+                setLocationNodesForPage(resTempLocData);
+            }
+        };
+
+        fetchLocations();
+    }, [locationNodes]);
+
+    useEffect(() => {
+        if (locationNodesForPage.length > 0) {
+            console.log("페이지에 표시할 장소 데이터", locationNodesForPage);
+            const lat_lng: number[][] = [];
+            for (let node of locationNodesForPage[dateIndex]) {
+                lat_lng.push([node.location.lat, node.location.lon]);
+            }
+
+            setLocationData(lat_lng);
+
+        }
+    }, [locationNodesForPage, dateIndex]);
+
+
 
 
 
@@ -167,7 +372,6 @@ export default function AboutTrip() {
                     flexDirection="column"
                     h="100%"
                     w="100%"
-
                 >
                     <Flex
                         justifyContent="space-between"
@@ -209,7 +413,7 @@ export default function AboutTrip() {
                     <Flex
                         justifyContent="center"
                         w="100%"
-                        h="100%"
+                        h="calc(100% - 100px)"
 
                         mt="20px"
                     >
@@ -219,52 +423,82 @@ export default function AboutTrip() {
                             h="100%"
 
                             rounded="15px"
+
+                            overflowY="auto"
                         >
-                            <Flex
-                                alignItems="center"
+                            {
+                                locChangeModalSearchResult && locChangeModalSearchResult.length > 0 ? (
+                                    locChangeModalSearchResult.map((location, index) => (
+                                        <Flex
+                                            alignItems="center"
 
-                                p="20px"
+                                            p="20px"
 
-                                justifyContent="space-between"
-                            >
-                                <Flex
-                                    alignItems="center"
-                                >
-                                    <Box
-                                        w="75px"
-                                        h="75px"
-                                        borderRadius="15px"
-                                        overflow="hidden"
-                                    >
-                                        <Image
-                                            w="100%"
-                                            h="100%"
-                                            src={TestImg}
-                                        />
-                                    </Box>
+                                            justifyContent="space-between"
 
+                                            key={index}
+                                        >
+                                            <Flex
+                                                alignItems="center"
+                                            >
+                                                <Box
+                                                    w="75px"
+                                                    h="75px"
+                                                    borderRadius="15px"
+                                                    overflow="hidden"
+                                                >
+                                                    <Image
+                                                        w="100%"
+                                                        h="100%"
+                                                        src={!location.image || location.image.length === 0 ? TestImg.replace("http://", "https://") : location.image[0]}
+                                                        loading="lazy"
+                                                    />
+                                                </Box>
+
+                                                <Flex
+                                                    pl="15px"
+                                                    gap="5px"
+
+                                                    flexDirection="column"
+                                                >
+                                                    <Text fontSize="17px" color="#727272">
+                                                        {location.title}
+                                                    </Text>
+                                                    <Text fontSize="12px" color="#B3B3B3">
+                                                        {location.address}
+                                                    </Text>
+                                                </Flex>
+                                            </Flex>
+
+                                            <Flex
+                                                cursor="pointer"
+                                                onClick={() => {changeLocationInModal(location.index, location.id)}}
+                                                    
+                                            >
+                                                <Image
+                                                    src={Loop}
+                                                    alt="loop"
+                                                />
+                                            </Flex>
+                                        </Flex>
+                                    ))
+                                ) : (
                                     <Flex
-                                        pl="15px"
-                                        gap="5px"
+                                        justifyContent="center"
+                                        alignItems="center"
 
-                                        flexDirection="column"
+                                        w="100%"
+                                        h="100%"
                                     >
-                                        <Text fontSize="17px" color="#727272">
-                                            짜장꽃필무렵
-                                        </Text>
-                                        <Text fontSize="12px" color="#B3B3B3">
-                                            경상북도 구미시 대학로 39
+                                        <Text
+                                            fontSize="20px"
+                                            color="#747474"
+                                        >
+                                            검색 결과가 없습니다
                                         </Text>
                                     </Flex>
-                                </Flex>
-
-                                <Flex>
-                                    <Image
-                                        src={Loop}
-                                        alt="loop"
-                                    />
-                                </Flex>
-                            </Flex>
+                                )
+                            }
                         </Box>
 
                     </Flex>
@@ -376,12 +610,6 @@ export default function AboutTrip() {
                                     >
                                         {user.name}
                                     </Text>
-                                    <Text
-                                        fontSize={isMobile ? "12px" : "14px"}
-                                        color="#CBCBCB"
-                                    >
-                                        {user.email}
-                                    </Text>
                                 </Flex>
                             </Flex>
                         ))}
@@ -408,8 +636,9 @@ export default function AboutTrip() {
                         >
                             <Text
                                 fontSize="16px"
+                                onClick={() => handleCopyClipBoard(`https://instantrip.ajb.kr/invite?code=${inviteCode}`)}
                             >
-                                URL
+                                https://instantrip.ajb.kr/invite?code={inviteCode}
                             </Text>
                         </Flex>
                     </Flex>
@@ -499,7 +728,9 @@ export default function AboutTrip() {
                         color="#585858"
 
                         onClick={dayDown}
-                        cursor="pointer"
+
+                        opacity={date.getTime() === minDate.getTime() ? 0.5 : 1}
+                        cursor={date.getTime() === minDate.getTime() ? "not-allowed" : "pointer"}
                     >
                         ⏴
                     </Text>
@@ -512,7 +743,9 @@ export default function AboutTrip() {
                         color="#585858"
 
                         onClick={dayUp}
-                        cursor="pointer"
+
+                        opacity={date.getTime() === maxDate.getTime() ? 0.5 : 1}
+                        cursor={date.getTime() === maxDate.getTime() ? "not-allowed" : "pointer"}
                     >
                         ⏵
                     </Text>
@@ -539,82 +772,98 @@ export default function AboutTrip() {
                                 w={isMobile ? "10px" : "60px"}
                                 borderRight="1px solid #606060"
                             />
-                            <Flex
-                                mt="5px"
-                                ml="10px"
-                                mr="10px"
-                                flexDirection="column"
-                                w="100%"
-                            >
-                                <Text
-                                    fontSize={isMobile ? "17px" : "20px"}
-                                >
-                                    1번째
-                                </Text>
                                 <Flex
-                                    justifyContent="space-between"
-                                    alignItems="center"
-
-                                    pl={isMobile ? "10px" : "20px"}
-                                    mt="5px"
-
+                                    ml="10px"
+                                    mr="10px"
+                                    direction="column"
                                     w="100%"
                                 >
-                                    <Flex
-                                        alignItems="center"
-                                    >
-                                        <Box
-                                            w={isMobile ? "60px" : "75px"}
-                                            h={isMobile ? "60px" : "75px"}
-                                            borderRadius="15px"
-                                            overflow="hidden"
-                                        >
-                                            <Image
-                                                w={isMobile ? "60px" : "75px"}
-                                                h={isMobile ? "60px" : "75px"}
-                                                src={TestImg}
-                                            />
-                                        </Box>
+                                    {
+                                        locationNodesForPage.length >= 1 && locationNodesForPage[dateIndex].map((location, index) => (
+                                            <Flex
+                                                w="100%"
 
-                                        <Box
-                                            pl="15px"
-                                            pt="5px"
-                                        >
-                                            <Text fontSize="17px" color="#606060">
-                                                짜장꽃필무렵
-                                            </Text>
-                                            <Text fontSize="12px" color="#B0B0B0">
-                                                경상북도 구미시 대학로 39
-                                            </Text>
-                                        </Box>
-                                    </Flex>
+                                                mt="5px"
 
-                                    <Flex
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        border="1px solid #E9E9E9"
-                                        borderRadius="15px"
+                                                direction="column"
 
-                                        w="80px"
-                                        h="35px"
+                                                key={index}
+                                            >
+                                                <Text
+                                                    fontSize={isMobile ? "17px" : "20px"}
+                                                >
+                                                    {index + 1}번째
+                                                </Text>
+                                                <Flex
+                                                    justifyContent="space-between"
+                                                    alignItems="center"
 
-                                        cursor="pointer"
+                                                    pl={isMobile ? "10px" : "20px"}
+                                                    mt="5px"
 
-                                        transition="0.3s all ease-in-out"
+                                                    w="100%"
+                                                >
+                                                    <Flex
+                                                        alignItems="center"
+                                                    >
+                                                        <Box
+                                                            w={isMobile ? "60px" : "75px"}
+                                                            h={isMobile ? "60px" : "75px"}
+                                                            borderRadius="15px"
+                                                            overflow="hidden"
+                                                        >
+                                                            <Image
+                                                                w={isMobile ? "60px" : "75px"}
+                                                                h={isMobile ? "60px" : "75px"}
+                                                                src={
+                                                                    !location.image || location.image.length === 0 ? TestImg.replace("http://", "https://") : location.image[0]
+                                                                }
+                                                                loading="lazy"
+                                                            />
+                                                        </Box>
 
-                                        _hover={{
-                                            backgroundColor: "#E9E9E9",
-                                        }}
+                                                        <Box
+                                                            pl="15px"
+                                                            pt="5px"
+                                                        >
+                                                            <Text fontSize="17px" color="#606060">
+                                                                {location.title}
+                                                            </Text>
+                                                            <Text fontSize="12px" color="#B0B0B0">
+                                                                {location.address}
+                                                            </Text>
+                                                        </Box>
+                                                    </Flex>
 
-                                        onClick={() => changeLocation(1)}
-                                    >
-                                        <Text
-                                            color="#696969"
-                                        >
-                                            교체
-                                        </Text>
-                                    </Flex>
-                                </Flex>
+                                                    <Flex
+                                                        justifyContent="center"
+                                                        alignItems="center"
+                                                        border="1px solid #E9E9E9"
+                                                        borderRadius="15px"
+
+                                                        w="80px"
+                                                        h="35px"
+
+                                                        cursor="pointer"
+
+                                                        transition="0.3s all ease-in-out"
+
+                                                        _hover={{
+                                                            backgroundColor: "#E9E9E9",
+                                                        }}
+                                                    
+                                                        onClick={() => changeLocation(index)}
+                                                    >
+                                                        <Text
+                                                            color="#696969"
+                                                        >
+                                                            교체
+                                                        </Text>
+                                                    </Flex>
+                                                </Flex>
+                                            </Flex>
+                                        ))
+                                    }
                             </Flex>
                         </Flex>
                     </Flex>
@@ -670,6 +919,24 @@ export default function AboutTrip() {
                     alt="triangle"
                 />
             </Flex>
+
+            
+            <Box
+                position="fixed"
+                top={showAlert ? "20px" : "-100px"}
+                // 중앙
+                left="50%"
+                transform="translateX(-50%)"
+
+                zIndex="toast"
+                maxWidth="400px"
+                transition="all 0.2s ease-in-out"
+            >
+                <Alert.Root status="success">
+                    <Alert.Indicator />
+                    <Alert.Title>클립보드에 복사되었습니다</Alert.Title>
+                </Alert.Root>
+            </Box>
         </Box>
     );
 }

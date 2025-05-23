@@ -24,3 +24,18 @@ export const logout = async () => {
   const response = await axios.get(`/back/logout`);
   return response;
 }
+
+
+
+export const getLocationData = async (loc_list: any[]) => {
+  const response = await axios.post(`/pyapi/get-location-data`, { ids: loc_list });
+  return response;
+}
+
+export const searchLocation = async (lat: number, lon: number, keyword: string) => {
+  if (keyword.length < 2) {
+    return [];
+  }
+  const response = await axios.post(`/pyapi/search-location`, { lat: lat, lon: lon, query: keyword });
+  return response.data;
+}
