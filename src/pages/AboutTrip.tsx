@@ -240,7 +240,10 @@ export default function AboutTrip() {
                 })));
                 // 날짜 범위 설정
                 setMinDate(new Date(plan.plan_start));
-                setDate(new Date(plan.plan_start));
+                // 만약 date가 범위를 벗어나면 minDate로 설정
+                if (date.getTime() < new Date(plan.plan_start).getTime()) {
+                    setDate(new Date(plan.plan_start));
+                }
                 setMaxDate(new Date(plan.plan_end));
 
                 // 공유 URL 코드 설정

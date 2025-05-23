@@ -47,7 +47,7 @@ const fetchRouteData = async (loc_data: MobilityQuery) => {
   }
 
   const response = await axios.post(`https://apis-navi.kakaomobility.com/v1/waypoints/directions`, loc_data, header);
-  return response.data.routes[0].sections;
+  return response.data;
 };
 
 export default function MapBox({ locationData }: { locationData: number[][] }) {
@@ -56,12 +56,12 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
       appkey: "e55ce2f428ca6e286c849083454b41cf"
     }
   )
-  const [ reqQuery, setReqQuery ] = useState<MobilityQuery>()
+  const [ reqQuery, setReqQuery ] = useState<MobilityQuery>();
 
-  const { data: results = [], isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
+  const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
     queryKey: ['query', reqQuery],
-    queryFn: () => reqQuery ? fetchRouteData(reqQuery) : Promise.reject("reqQuery is undefined"),
-    enabled: true,
+    queryFn: () => reqQuery ? fetchRouteData(reqQuery) : [],
+    enabled: !!reqQuery,
   });
   
   const [ path, setPath ] = useState<Array<Coordinate>>([])
@@ -86,32 +86,50 @@ export default function MapBox({ locationData }: { locationData: number[][] }) {
         })),
         priority: "RECOMMEND",
         car_fuel: "GASOLINE",
-        car_hipass: false,
-        alternatives: false,
+        car_hipass: true,
+        alternatives: true,
         road_details: false,
         summary: false,
       });
+    }
+  }, [ locationData ]);
 
+  useEffect(() => {
+    if (reqQuery) {
       refetchRouteData();
     }
-  }, [ locationData, refetchRouteData ]);
+  }, [ reqQuery, refetchRouteData ]);
 
   useEffect(() => {
     if (results) {
       const linepath: Array<Coordinate> = []
-      for (const section of results) {
-        for (const road of section.roads) {
-          for (let i = 0; i < road.vertexes.length; i++) {
-            if (i % 2 === 0) {
-              linepath.push({
-                lat: road.vertexes[i + 1],
-                lng: road.vertexes[i],
-              });
+      if (results.routes[0].result_code != 0) {
+        // 카카오 모빌리티에서 값을 가져오지 못한 경우 단순 좌표값 이어 그리기
+        for (let loc of locationData) {
+          linepath.push({
+            lat: loc[0],
+            lng: loc[1],
+          });
+        }
+        setPath(linepath);
+        return;
+      }
+      if (results.routes[0].sections && results.routes[0].sections.length > 0) {
+        console.log("results", results);
+        for (const section of results.routes[0].sections) {
+          for (const road of section.roads) {
+            for (let i = 0; i < road.vertexes.length; i++) {
+              if (i % 2 === 0) {
+                linepath.push({
+                  lat: road.vertexes[i + 1],
+                  lng: road.vertexes[i],
+                });
+              }
             }
           }
         }
+        setPath(linepath);
       }
-      setPath(linepath);
     }
   }, [ results ]);
 
