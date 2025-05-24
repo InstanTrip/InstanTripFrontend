@@ -32,10 +32,10 @@ export const getLocationData = async (loc_list: any[]) => {
   return response;
 }
 
-export const searchLocation = async (lat: number, lon: number, keyword: string) => {
+export const searchLocation = async (lat: number, lon: number, location: string, keyword: string) => {
   if (keyword.length < 2) {
     return [];
   }
-  const response = await axios.post(`/pyapi/search-location`, { lat: lat, lon: lon, query: keyword });
+  const response = await axios.post(`/pyapi/search-location`, { lat: lat, lon: lon, location: location, query: keyword });
   return response.data;
 }

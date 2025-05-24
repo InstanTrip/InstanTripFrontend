@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, use } from 'react';
 import Modal from 'react-modal';
 import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -143,18 +143,13 @@ export default function AboutTrip() {
         setLocChangeModalSearch("");
     }
 
-
-
-
-
-
-
     // 검색
     const { data: searchResults , isLoading: searchIsLoading, error: searchTripError, refetch: refetchSearchCreateTrip } = useQuery({
         queryKey: [],
         queryFn: () => searchLocation(
             locationData[selectLocIndex][0],
             locationData[selectLocIndex][1],
+            locationNodes[dateIndex].location,
             locChangeModalSearch
         ),
         enabled: false,
@@ -183,6 +178,9 @@ export default function AboutTrip() {
 
 
 
+
+
+
     // 장소 교체
     const changeLocationInModal = (destination_type: string, destination_id: string) => {
         closeModal();
@@ -198,10 +196,6 @@ export default function AboutTrip() {
             }));
         }
     }
-
-
-
-
 
 
 
