@@ -3,18 +3,18 @@ import { Box, Flex, Heading, Text, Button, VStack, Image, useBreakpointValue } f
 import River from '@/assets/river.webp';
 
 const NotFoundPage = () => {
-    const leftPadding: string = useBreakpointValue({ base: "30px", md: "100px" }) as string;
+    const pxValue: string = useBreakpointValue({ base: "30px", md: "100px" }) as string;
 
     return (
         <Flex
-            minH="100vh"
+            h="100vh"
             w="100vw"
             position="relative"
             overflow="hidden"
             alignItems="center"
             bgGradient="linear(to-br, teal.400 0%, blue.700 100%)"
 
-            pl={leftPadding}
+            px={pxValue}
         >
             {/* 배경 이미지 */}
             <Image

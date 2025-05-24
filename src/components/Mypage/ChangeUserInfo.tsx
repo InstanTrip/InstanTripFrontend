@@ -1,17 +1,63 @@
-import { useState } from 'react';
-import { Flex, Grid, GridItem, Box, Text, Input, Button } from '@chakra-ui/react';
+import { use, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { Flex, Grid, GridItem, Box, Text, Input, Button, Alert, useBreakpointValue } from '@chakra-ui/react';
+import { AxiosResponse } from 'axios';
 
-export default function ChangeUserInfo() {
-    const [userEmail, setUserEmail] = useState("testEmail");
-    const [newPassword, setNewPassword] = useState("");
-    const [newPasswordRetry, setNewPasswordRetry] = useState("");
-    const [userName, setUserName] = useState("");
-    const [userCurrentPassword, setUserCurrentPassword] = useState("");
+import { changeNickname } from '@/utils/Api';
+
+export default function ChangeUserInfo({ userEmail, userName, refetchNickname }: { userEmail: string, userName: string, refetchNickname: () => void }) {
+    const navigate = useNavigate();
+
+    // 사용자 닉네임
+    const [name, setUserName] = useState(userName);
+    const [showAlert, setShowAlert] = useState(false);
+
+    const mutation = useMutation<AxiosResponse, Error, string>({
+        mutationFn: changeNickname,
+        onSuccess: (data: AxiosResponse) => {
+            if (data.status === 200) {
+                refetchNickname();
+                setShowAlert(true);
+                setTimeout(() => {
+                    setShowAlert(false);
+                }, 2000);
+            } else {
+                alert("닉네임 변경에 실패했습니다.");
+            }
+        },
+        onError: (error: any) => {
+            if (error?.response?.status === 401) {
+                alert("로그인이 필요합니다.");
+                navigate('/', { replace: true });
+            } else {
+                alert("닉네임 변경에 실패했습니다. 다시 시도해주세요.");
+            }
+        }
+    });
+
+
+    const changeNicknameButton = () => {
+        mutation.mutate(name);
+    }
+
+    const gotoChangePassword = () => {
+        window.open("https://ap-northeast-21vunt4c2x.auth.ap-northeast-2.amazoncognito.com/forgotPassword?client_id=3p91g59lqequcb7e3i8j5jfgka&nonce=WycJNgNJ586dyn3QXXO9Ke1nGImVnk_dSDlUAGnMNrM&prompt=login&redirect_uri=https://instantrip.ajb.kr/mypage&response_type=code&scope=email+openid+phone&state=RqXp1VgRRyIQsqDXTb_4tct45veJtANzRRtq0hdAc_8%3D")
+    }
+
+
+    const isMobile = useBreakpointValue({ base: true, md: false });
+    const paddingX = useBreakpointValue({ base: "10px", md: "50px" });
+    const titleFontSize = useBreakpointValue({ base: "25px", md: "35px" });
+    const gridTitleFontSize = useBreakpointValue({ base: "13px", md: "19px" });
+    const gridItemHeight = useBreakpointValue({ base: "50px", md: "80px" });
+    const gridBoxPaddingX = useBreakpointValue({ base: "10px", md: "30px" });
 
     return (
         <Flex
             w="100%"
             h="100%"
+            px={paddingX}
             
             justifyContent="center"
         >
@@ -20,7 +66,7 @@ export default function ChangeUserInfo() {
                 py="50px"
             >
                 <Text
-                    fontSize="35px"
+                    fontSize={titleFontSize}
                     color="#9B9B9B"
                 >
                     회원정보 변경
@@ -36,7 +82,7 @@ export default function ChangeUserInfo() {
 
                     <GridItem
                         borderBottom="1px solid #BCBCBC"
-                        h="160px"
+                        h={gridItemHeight}
                         bgColor="#E7E7E7"
                     >
                         <Flex
@@ -47,7 +93,7 @@ export default function ChangeUserInfo() {
                             alignItems="center"
                         >
                             <Text
-                                fontSize="20px"
+                                fontSize={gridTitleFontSize}
                                 color="#6D6767"
                             >
                                 EMAIL
@@ -62,91 +108,20 @@ export default function ChangeUserInfo() {
                             w="100%"
                             h="100%"
 
-                            px="30px"
+                            px={gridBoxPaddingX}
 
                             flexDirection="column"
                             justifyContent="center"
                         >
-                            <Flex w="100%"
-                                flexDirection="column"
-
-                                gap="10px"
-                            >
-                                <Flex
-                                    w="100%"
-                                    h="50px"
-
-                                    gap="10px"
-                                >
-                                    <Input
-                                        placeholder="이메일을 입력하세요"
-                                        value={userEmail}
-                                        onChange={(e) => setUserEmail(e.target.value)}
-
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                    <Button
-                                        h="100%"
-                                        w="120px"
-
-                                        bgColor="#93E2FF"
-
-                                        _hover={{
-                                            bgColor: "#81D4F2"
-                                        }}
-                    
-                                        transition="all 0.3s ease-in-out"
-                                    >
-                                        <Text
-                                            color="white"
-                                        >
-                                            인증번호 전송
-                                        </Text>
-                                    </Button>
-                                </Flex>
-                                <Flex
-                                    w="100%"
-                                    h="50px"
-
-                                    gap="10px"
-                                >
-                                    <Input
-                                        placeholder="인증번호를 입력하세요"
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                    <Button
-                                        h="100%"
-                                        w="120px"
-
-                                        bgColor="#93E2FF"
-
-                                        _hover={{
-                                            bgColor: "#81D4F2"
-                                        }}
-                    
-                                        transition="all 0.3s ease-in-out"
-                                    >
-                                        <Text
-                                            color="white"
-                                        >
-                                            인증
-                                        </Text>
-                                    </Button>
-                                </Flex>
-                            </Flex>
+                            <Text>
+                                {userEmail}
+                            </Text>
                         </Flex>
                     </GridItem>
 
                     <GridItem
                         borderBottom="1px solid #BCBCBC"
-                        h="160px"
+                        h={gridItemHeight}
                         bgColor="#E7E7E7"
                     >
                         <Flex
@@ -157,8 +132,10 @@ export default function ChangeUserInfo() {
                             alignItems="center"
                         >
                             <Text
-                                fontSize="20px"
+                                fontSize={gridTitleFontSize}
                                 color="#6D6767"
+
+                                textAlign="center"
                             >
                                 비밀번호 변경
                             </Text>
@@ -172,55 +149,40 @@ export default function ChangeUserInfo() {
                             w="100%"
                             h="100%"
 
-                            px="30px"
+                            px={gridBoxPaddingX}
 
                             flexDirection="column"
                             justifyContent="center"
                         >
-                            <Flex w="100%"
-                                flexDirection="column"
+                            <Button
+                                bgColor="#93E2FF"
 
-                                gap="10px"
+                                outline="none"
+                                border="none"
+
+                                _hover={{
+                                    bgColor: "#81D4F2"
+                                }}
+                                _focus={{
+                                    outline: "none"
+                                }}
+
+                                transition="all 0.3s ease-in-out"
+
+                                onClick={gotoChangePassword}
                             >
-                                <Flex
-                                    w="100%"
-                                    h="50px"
+                                <Text
+                                    color="white"
                                 >
-                                    <Input
-                                        placeholder="새 비밀번호"
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                </Flex>
-                                <Flex
-                                    w="100%"
-                                    h="50px"
-                                >
-                                    <Input
-                                        placeholder="비밀번호 확인"
-                                        value={newPasswordRetry}
-                                        onChange={(e) => setNewPasswordRetry(e.target.value)}
-
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                </Flex>
-                            </Flex>
+                                    비밀번호 변경하기
+                                </Text>
+                            </Button>
                         </Flex>
                     </GridItem>
 
                     <GridItem
                         borderBottom="1px solid #BCBCBC"
-                        h="80px"
+                        h={gridItemHeight}
                         bgColor="#E7E7E7"
                     >
                         <Flex
@@ -231,10 +193,10 @@ export default function ChangeUserInfo() {
                             alignItems="center"
                         >
                             <Text
-                                fontSize="20px"
+                                fontSize={gridTitleFontSize}
                                 color="#6D6767"
                             >
-                                이름
+                                닉네임
                             </Text>
                         </Flex>
                     </GridItem>
@@ -244,124 +206,75 @@ export default function ChangeUserInfo() {
                     >
                         <Flex
                             w="100%"
-                            h="100%"
 
-                            px="30px"
-
-                            flexDirection="column"
-                            justifyContent="center"
-                        >
-                            <Flex w="100%"
-                                flexDirection="column"
-
-                                gap="10px"
-                            >
-                                <Flex
-                                    w="100%"
-                                    h="50px"
-                                >
-                                    <Input
-                                        placeholder="이름을 입력하세요"
-                                        value={userName}
-                                        onChange={(e) => setUserName(e.target.value)}
-
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                </Flex>
-                            </Flex>
-                        </Flex>
-                    </GridItem>
-
-                    <GridItem
-                        borderBottom="1px solid #BCBCBC"
-                        h="80px"
-                        bgColor="#E7E7E7"
-                    >
-                        <Flex
-                            w="100%"
-                            h="100%"
-
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            <Text
-                                fontSize="20px"
-                                color="#6D6767"
-                            >
-                                기존 비밀번호
-                            </Text>
-                        </Flex>
-                    </GridItem>
-                    <GridItem
-                        borderBottom="1px solid #BCBCBC"
-                        colSpan={4}
-                    >
-                        <Flex
-                            w="100%"
-                            h="100%"
-
-                            px="30px"
+                            px={gridBoxPaddingX}
 
                             flexDirection="column"
                             justifyContent="center"
+
+                            h="100%"
                         >
-                            <Flex w="100%"
-                                flexDirection="column"
+                            <Flex
+                                w="100%"
+                                alignItems="center"
 
                                 gap="10px"
                             >
-                                <Flex
+                                <Input
+                                    placeholder="닉네임을 입력하세요"
+                                    value={name}
+                                    onChange={(e) => setUserName(e.target.value)}
+                                    border="1px solid #BCBCBC"
+                                    borderRadius="10px"
                                     w="100%"
-                                    h="50px"
+                                />
+                                <Button
+                                    bgColor="#93E2FF"
+                                    outline="none"
+                                    border="none"
+
+                                    _hover={{
+                                        bgColor: "#81D4F2"
+                                    }}
+                                    _focus={{
+                                        outline: "none"
+                                    }}
+
+                                    px={isMobile ? "3px" : "15px"}
+
+                                    transition="all 0.3s ease-in-out"
+                                    h="100%"
+
+                                    onClick={changeNicknameButton}
                                 >
-                                    <Input
-                                        placeholder="보안을 위해 기존 비밀번호를 다시 확인합니다"
-                                        value={userCurrentPassword}
-                                        onChange={(e) => setUserCurrentPassword(e.target.value)}
-
-                                        border="1px solid #BCBCBC"
-                                        borderRadius="10px"
-
-                                        w="100%"
-                                        h="100%"
-                                    />
-                                </Flex>
+                                    <Text
+                                        color="white"
+                                        fontSize={isMobile ? "12px" : "16px"}
+                                    >
+                                        변경하기
+                                    </Text>
+                                </Button>
                             </Flex>
                         </Flex>
                     </GridItem>
                 </Grid>
+            </Box>
 
+            <Box
+                position="fixed"
+                top={showAlert ? "20px" : "-100px"}
+                // 중앙
+                left="50%"
+                transform="translateX(-50%)"
 
-                <Flex
-                    w="100%"
-                    h="60px"
-                    mt="30px"
-
-                    justifyContent="center"
-                    alignItems="center"
-
-                    cursor="pointer"
-
-                    bgColor="#93E2FF"
-                    rounded="5px"
-                    
-                    _hover={{
-                        bgColor: "#81D4F2"
-                    }}
-
-                    transition="all 0.3s ease-in-out"
-                >
-                    <Text
-                        color="white"
-                        fontSize="25px"
-                    >
-                        변경내용 저장
-                    </Text>
-                </Flex>
+                zIndex="toast"
+                maxWidth="400px"
+                transition="all 0.2s ease-in-out"
+            >
+                <Alert.Root status="success">
+                    <Alert.Indicator />
+                    <Alert.Title>닉네임이 변경되었습니다</Alert.Title>
+                </Alert.Root>
             </Box>
         </Flex>
     );

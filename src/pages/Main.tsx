@@ -15,6 +15,7 @@ export default function Main() {
         queryKey: [],
         queryFn: () => getUserData(),
         enabled: true,
+        retry: 0,
     });
 
     useEffect(() => {

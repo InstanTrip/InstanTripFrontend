@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, use } from 'react';
 import Modal from 'react-modal';
 import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import useWebSocket from 'react-use-websocket';
 import { useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
@@ -18,6 +18,7 @@ import MapBox from "@/components/Map/MapBox";
 import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
 import { getLocationData, searchLocation } from "@/utils/Api";
 import { FormatDate } from '@/utils/FormatDate';
+import { getUserData } from '@/utils/Api';
 
 interface Node {
     destination_type: string;
@@ -48,6 +49,8 @@ interface SearchResult {
 }
 
 export default function AboutTrip() {
+    const navigate = useNavigate();
+
     // 웹소켓으로 받아온 데이터
     const [ locationNodes, setLocationNodes ] = useState<Nodes[]>([]);
 
@@ -58,8 +61,6 @@ export default function AboutTrip() {
     const [ locationData, setLocationData ] = useState<number[][]>([
         [36.1460625, 128.3934375],
     ]);
-
-    const navigate = useNavigate();
 
     // URL에서 id 파라미터 가져오기
     const [ searchParams ] = useSearchParams();
@@ -79,7 +80,37 @@ export default function AboutTrip() {
     // 엑세스 권한이 있는 사용자 목록
     const [ accessUserList, setAccessUserList ] = useState<User[]>([]);
     
-    // 날짜 관련 변수
+
+    // 로그인 체크
+    const { data: results , isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
+        queryKey: ['userData'],
+        queryFn: () => getUserData(),
+        retry: 0,
+    });
+
+    useEffect(() => {
+        if (results) {
+            console.log("로그인 상태:", results.status);
+            if (results.status !== 200) {
+                alert("로그인이 필요합니다.");
+                navigate('/', { replace: true });
+            }
+        }
+        if (routeError) {
+            // Check if routeError has a 'status' property
+            if (typeof (routeError as any).status === 'number' && (routeError as any).status === 401) {
+                alert("로그인이 필요합니다.");
+                navigate('/', { replace: true });
+            }
+        }
+    }, [results, routeError, navigate]);
+
+
+
+
+
+
+    // 날짜 관련
     const [ date, setDate ] = useState<Date>(new Date());
     const dayUp = () => {
         // 날짜를 하루 올림
@@ -148,8 +179,8 @@ export default function AboutTrip() {
     const { data: searchResults , isLoading: searchIsLoading, error: searchTripError, refetch: refetchSearchCreateTrip } = useQuery({
         queryKey: [],
         queryFn: () => searchLocation(
-            locationData[selectLocIndex][0],
-            locationData[selectLocIndex][1],
+            locationNodesForPage[dateIndex][selectLocIndex].location.lat,
+            locationNodesForPage[dateIndex][selectLocIndex].location.lon,
             locationNodes[dateIndex].location,
             locChangeModalSearch
         ),
@@ -266,38 +297,45 @@ export default function AboutTrip() {
 
     // 장소 데이터가 변경될 때마다 페이지에 표시할 장소 데이터 업데이트
     useEffect(() => {
-    const fetchLocations = async () => {
-        if (locationNodes.length === 0) return;
+        const fetchLocations = async () => {
+            if (locationNodes.length === 0) return;
 
-        // 요청할 데이터 배열 생성
-        const tempLocDataList = locationNodes.map(n =>
-            n.nodes.map(node => ({
-                type: node.destination_type,
-                id: node.destination_id
-            }))
-        );
-
-        try {
-            // 병렬로 모든 요청을 보냄
-            const responses = await Promise.all(
-                tempLocDataList.map(tempLocData => getLocationData(tempLocData))
+            // 요청할 데이터 배열 생성
+            const tempLocDataList = locationNodes.map(n =>
+                n.nodes.map(node => ({
+                    type: node.destination_type,
+                    id: node.destination_id
+                }))
             );
-            // 응답 데이터만 추출
-            const resTempLocData = responses.map(res => res.data);
+            console.log("요청할 장소 데이터:", tempLocDataList);
 
-            setLocationNodesForPage(resTempLocData);
-        } catch (error) {
-            console.error("장소 데이터 요청 실패:", error);
-        }
-    };
+            try {
+                // 병렬로 모든 요청을 보냄
+                const responses = await Promise.all(
+                    tempLocDataList.map(tempLocData => getLocationData(tempLocData))
+                );
+                // 응답 데이터만 추출
+                const resTempLocData = responses.map(res => res.data);
 
-    fetchLocations();
-}, [locationNodes]);
+                console.log("장소 데이터 요청 결과:", resTempLocData);
+                setLocationNodesForPage(resTempLocData);
+            } catch (error) {
+                console.error("장소 데이터 요청 실패:", error);
+            }
+        };
+
+        fetchLocations();
+    }, [locationNodes]);
 
     useEffect(() => {
         if (locationNodesForPage.length > 0) {
             console.log("페이지에 표시할 장소 데이터", locationNodesForPage);
             const lat_lng: number[][] = [];
+            // 전날 데이터가 존재한다면 전날 마지막 데이터 좌표 추가
+            if (dateIndex > 0 && locationNodesForPage[dateIndex - 1]) {
+                const lastNode = locationNodesForPage[dateIndex - 1][locationNodesForPage[dateIndex - 1].length - 1];
+                lat_lng.push([lastNode.location.lat, lastNode.location.lon]);
+            }
             for (let node of locationNodesForPage[dateIndex]) {
                 lat_lng.push([node.location.lat, node.location.lon]);
             }
@@ -671,10 +709,13 @@ export default function AboutTrip() {
 
                             alignItems="center"
                             px="9px"
+
+                            onClick={() => handleCopyClipBoard(`https://instantrip.ajb.kr/invite?code=${inviteCode}`)}
+                            cursor="pointer"
                         >
                             <Text
                                 fontSize="16px"
-                                onClick={() => handleCopyClipBoard(`https://instantrip.ajb.kr/invite?code=${inviteCode}`)}
+                                color="blue"
                             >
                                 https://instantrip.ajb.kr/invite?code={inviteCode}
                             </Text>
@@ -916,7 +957,10 @@ export default function AboutTrip() {
                 position="absolute"
                 right="0"
             >
-                <MapBox locationData={locationData} />
+                <MapBox
+                    locationData={locationData}
+                    dateIndex={dateIndex}
+                />
             </Box>
 
             {/* 플로팅버튼 */}
