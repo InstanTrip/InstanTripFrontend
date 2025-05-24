@@ -136,7 +136,7 @@ export default function Invite() {
                         background: "rgba(255, 255, 255, 0.1)",
                         borderColor: "whiteAlpha.700",
                     }}
-                    _active={{
+                    _focus={{
                         outline: "none",
                     }}
 
