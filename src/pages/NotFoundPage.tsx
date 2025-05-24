@@ -69,12 +69,10 @@ const NotFoundPage = () => {
                     멋진 계획을 세우러 홈으로 돌아가 볼까요?
                 </Text>
                 <Button
-                    // colorScheme="teal"
                     size="lg"
                     borderRadius="md"
                     px={8}
                     fontWeight="bold"
-                    // boxShadow="sm"
                     color="white"
 
                     border="1px solid #ffffff70"
@@ -84,6 +82,9 @@ const NotFoundPage = () => {
                     _hover={{
                         bg: "#ffffff20",
                         border: "1px solid #ffffff70",
+                        outline: "none",
+                    }}
+                    _focus={{
                         outline: "none",
                     }}
 
