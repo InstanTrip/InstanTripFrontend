@@ -5,11 +5,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import useWebSocket from 'react-use-websocket';
 import { useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
+import { GridLoader } from 'react-spinners';
 
 import EarthImg from "@/assets/earth.svg";
 import Close from "@/assets/close.svg";
 import Loop from "@/assets/icon_loop.svg";
-import TestImg from "@/assets/testimage.jpg";
+import InstanTripOriginLogo from "@/assets/instantrip_origin.webp";
 import TriangleArrow from "@/assets/triangle_arrow.svg";
 
 import MapBox from "@/components/Map/MapBox";
@@ -216,6 +217,8 @@ export default function AboutTrip() {
         }
     }, [readyState]);
 
+    const [lastPongTime, setLastPongTime] = useState<number>(Date.now());
+
     // 웹소켓에서 받은 메시지 처리
     useEffect(() => {
         if (lastMessage !== null) {
@@ -242,41 +245,54 @@ export default function AboutTrip() {
 
                 // 공유 URL 코드 설정
                 setInviteCode(plan.invite_code);
+            } else if (data.type === "PONG") {
+                if (lastPongTime !== data.time) {
+                    setLastPongTime(data.time);
+                    console.log("PONG: ", data.time);
+                }
             }
         }
     }, [lastMessage]);
+    useEffect(() => {
+        if (readyState === WebSocket.OPEN) {
+            const interval = setInterval(() => {
+                console.log("PING")
+                sendMessage(JSON.stringify({ message_type: "PING" }));
+            }, 10000);
+
+          return () => clearInterval(interval);
+        }
+    }, [readyState, sendMessage]);
 
     // 장소 데이터가 변경될 때마다 페이지에 표시할 장소 데이터 업데이트
     useEffect(() => {
-        const fetchLocations = async () => {
-            if (locationNodes.length > 0) {
-                let resTempLocData: any[][] = [];
+    const fetchLocations = async () => {
+        if (locationNodes.length === 0) return;
 
-                for (let n of locationNodes) {
-                    let tempLocData: any[] = [];
+        // 요청할 데이터 배열 생성
+        const tempLocDataList = locationNodes.map(n =>
+            n.nodes.map(node => ({
+                type: node.destination_type,
+                id: node.destination_id
+            }))
+        );
 
-                    for (let node of n.nodes) {
-                        tempLocData.push({
-                            type: node.destination_type,
-                            id: node.destination_id
-                        });
-                    }
+        try {
+            // 병렬로 모든 요청을 보냄
+            const responses = await Promise.all(
+                tempLocDataList.map(tempLocData => getLocationData(tempLocData))
+            );
+            // 응답 데이터만 추출
+            const resTempLocData = responses.map(res => res.data);
 
-                    console.log("장소 데이터 요청", tempLocData);
-                    try {
-                        const response = await getLocationData(tempLocData);
-                        console.log("장소 데이터", response.data);
-                        resTempLocData.push(response.data);
-                    } catch (error) {
-                        console.error("장소 데이터 요청 실패:", error);
-                    }
-                }
-                setLocationNodesForPage(resTempLocData);
-            }
-        };
+            setLocationNodesForPage(resTempLocData);
+        } catch (error) {
+            console.error("장소 데이터 요청 실패:", error);
+        }
+    };
 
-        fetchLocations();
-    }, [locationNodes]);
+    fetchLocations();
+}, [locationNodes]);
 
     useEffect(() => {
         if (locationNodesForPage.length > 0) {
@@ -319,7 +335,6 @@ export default function AboutTrip() {
     // 1: 일정창이 지도를 가림
     const [ slideStatus, setSlideStatus ] = useState(0);
 
-
     const togleSlideStatus = () => {
         if (slideStatus === 0) {
             setLeftSlideLeft("-100vw");
@@ -330,6 +345,14 @@ export default function AboutTrip() {
         }
     }
 
+    // 모바일에서 사이드바가 안열린 상태로 데스크탑 환경으로 변경됐을 때 사이드바 강제 오픈
+    useEffect(() => {
+        if (!isMobile) {
+            setLeftSlideLeft("0px");
+            setSlideStatus(0);
+        }
+    }, [isMobile]);
+
     return (
         <Box
             w="100vw"
@@ -337,6 +360,24 @@ export default function AboutTrip() {
 
             position="relative"
         >
+            {/* 로딩 스피너 */}
+            <Flex
+                position="fixed"
+                top={0}
+                left={0}
+                width="100vw"
+                height="100vh"
+                backgroundColor="rgba(0, 0, 0, 0.7)"
+                zIndex={9999}
+                display={readyState != WebSocket.OPEN ? "flex" : "none"}
+                justifyContent="center"
+                alignItems="center"
+            >
+                <GridLoader
+                    color="white"
+                />
+            </Flex>
+
             {/* 장소 교체 모달창 */}
             <Modal
                 isOpen={locChangeModalIsOpen}
@@ -447,7 +488,7 @@ export default function AboutTrip() {
                                                     <Image
                                                         w="100%"
                                                         h="100%"
-                                                        src={!location.image || location.image.length === 0 ? TestImg.replace("http://", "https://") : location.image[0]}
+                                                        src={!location.image || location.image.length === 0 ? InstanTripOriginLogo.replace("http://", "https://") : location.image[0]}
                                                         loading="lazy"
                                                     />
                                                 </Box>
@@ -813,7 +854,7 @@ export default function AboutTrip() {
                                                                 w={isMobile ? "60px" : "75px"}
                                                                 h={isMobile ? "60px" : "75px"}
                                                                 src={
-                                                                    !location.image || location.image.length === 0 ? TestImg.replace("http://", "https://") : location.image[0]
+                                                                    !location.image || location.image.length === 0 ? InstanTripOriginLogo.replace("http://", "https://") : location.image[0]
                                                                 }
                                                                 loading="lazy"
                                                             />

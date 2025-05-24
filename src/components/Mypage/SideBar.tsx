@@ -6,6 +6,7 @@ import RippleButton from "../Misc/RippleButton";
 import task_list_icon from "../../assets/task_list_icon.svg";
 import setting_icon from "../../assets/setting_icon.svg";
 import logout_icom from "../../assets/logout_icon.svg";
+import InstantripLogo from "../../assets/instantrip.webp";
 
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
     const isMobile = useBreakpointValue({ base: true, md: false }) as boolean;
@@ -27,7 +28,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
             direction="column"
             transition="all 0.2s ease-in-out"
         >
-            <Box pl="50px">
+            <Box pl={isMobile ? "" : "50px"}>
                 <Link
                     fontSize="40px"
                     fontWeight="lighter"
@@ -42,6 +43,18 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                     display={isMobile ? "none" : "block"}
                 >
                     InstanTrip.
+                </Link>
+                <Link
+                    outline="none"
+                    href="/"
+                    display={isMobile ? "block" : "none"}
+                >
+                    <Image
+                        src={InstantripLogo}
+                        alt="InstanTrip Logo"
+                        w="50px"
+                        h="50px"
+                    />
                 </Link>
             </Box>
             
