@@ -29,7 +29,7 @@ export default function Mypage() {
     }, [page]);
 
     // 로그인 체크
-    const { data: results , isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
+    const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
         queryKey: ['userData'],
         queryFn: () => getUserData(),
         retry: 0,

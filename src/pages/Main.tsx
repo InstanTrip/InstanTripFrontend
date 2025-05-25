@@ -11,7 +11,7 @@ export default function Main() {
     const [isLogin, setIsLogin] = useState(false); // 로그인 상태
 
     // 리엑트 쿼리로 로그인 상태 가져오기
-    const { data: results , isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
+    const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
         queryKey: [],
         queryFn: () => getUserData(),
         enabled: true,

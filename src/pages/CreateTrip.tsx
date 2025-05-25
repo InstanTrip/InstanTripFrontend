@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { fetchCreateTrip } from '@/utils/Api';
 import { FormatDate } from '@/utils/FormatDate';
+import { getUserData } from '@/utils/Api';
 
 import StatusBar from '@/components/CreateTrip/StatusBar';
 // import TripPeriod from '@/components/TripSetting/TripPeriod';
@@ -42,6 +43,35 @@ export default function CreateTrip() {
     };
 
     const navigate = useNavigate();
+
+
+
+    // 리엑트 쿼리로 로그인 상태 가져오기
+    const { data: loginResults, error: loginError } = useQuery({
+        queryKey: [],
+        queryFn: () => getUserData(),
+        enabled: true,
+        retry: 0,
+    });
+
+    useEffect(() => {
+        if (results) {
+            console.log("로그인 상태:", results.status);
+            if (results.status !== 200) {
+                alert("로그인이 필요합니다.");
+                navigate('/', { replace: true });
+            }
+        }
+        if (loginError) {
+            // Check if loginError has a 'status' property
+            if (typeof (loginError as any).status === 'number' && (loginError as any).status === 401) {
+                alert("로그인이 필요합니다.");
+                navigate('/', { replace: true });
+            }
+        }
+    }, [loginResults, loginError, navigate]);
+
+
 
     // 여행 기간 선택
     const [startDate, setStartDate] = useState<Date | null>(null);
