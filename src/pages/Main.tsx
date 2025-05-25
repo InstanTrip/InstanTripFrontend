@@ -48,7 +48,7 @@ export default function Main() {
     const logoTop: string = useBreakpointValue({ base: "25px", md: "35px" }) as string;
 
     // 로그인 / 회원가입 반응형
-    const loginFontSize: string = useBreakpointValue({ base: "15px", md: "15px" }) as string;
+    const loginFontSize: string = useBreakpointValue({ base: "15px", md: "18px" }) as string;
     const loginRight: string = useBreakpointValue({ base: "25px", md: "50px" }) as string;
     const loginTop: string = useBreakpointValue({ base: "30px", md: "40px" }) as string;
 

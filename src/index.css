@@ -1,5 +1,12 @@
+@font-face {
+  font-family: "MapleStory";
+  font-weight: normal;
+  src: url("./fonts/Maplestory-Light.ttf") format("truetype");
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: "MapleStory", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

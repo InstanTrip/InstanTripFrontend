@@ -190,7 +190,6 @@ export default function AboutTrip() {
     // 검색 결과가 있을 때마다 모달창에 표시
     useEffect(() => {
         if (searchResults) {
-            console.log("검색 결과", searchResults);
             setLocChangeModalSearchResult(searchResults);
         }
     }, [searchResults]);
@@ -241,6 +240,14 @@ export default function AboutTrip() {
         shouldReconnect: (closeEvent) => true,
     });
 
+    // 첫 연결에 오류가 발생했을 경우 에러페이지로 이동
+    useEffect(() => {
+        if (readyState === WebSocket.CLOSED) {
+            console.error("웹소켓 연결 실패, 에러페이지로 이동");
+            navigate("/error?code=400", { replace: true });
+        }
+    }, [readyState, navigate]);
+
     useEffect(() => {
         // 웹소켓 연결이 성공적으로 이루어졌을 때 메시지 전송
         if (readyState === WebSocket.OPEN) {
@@ -256,7 +263,6 @@ export default function AboutTrip() {
             const data = JSON.parse(lastMessage.data);
             if (data.type === "JOIN" || data.type === "UPDATE") {
                 const plan = data.plan;
-                console.log("WebSocket message received:", plan);
 
                 // 장소 데이터 업데이트
                 setLocationNodes(plan.destinations);
@@ -307,7 +313,6 @@ export default function AboutTrip() {
                     id: node.destination_id
                 }))
             );
-            console.log("요청할 장소 데이터:", tempLocDataList);
 
             try {
                 // 병렬로 모든 요청을 보냄
@@ -317,7 +322,6 @@ export default function AboutTrip() {
                 // 응답 데이터만 추출
                 const resTempLocData = responses.map(res => res.data);
 
-                console.log("장소 데이터 요청 결과:", resTempLocData);
                 setLocationNodesForPage(resTempLocData);
             } catch (error) {
                 console.error("장소 데이터 요청 실패:", error);
@@ -329,7 +333,6 @@ export default function AboutTrip() {
 
     useEffect(() => {
         if (locationNodesForPage.length > 0) {
-            console.log("페이지에 표시할 장소 데이터", locationNodesForPage);
             const lat_lng: number[][] = [];
             // 전날 데이터가 존재한다면 전날 마지막 데이터 좌표 추가
             if (dateIndex > 0 && locationNodesForPage[dateIndex - 1]) {

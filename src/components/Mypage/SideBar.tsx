@@ -30,7 +30,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
         >
             <Box pl={isMobile ? "" : "50px"}>
                 <Link
-                    fontSize="40px"
+                    fontSize="35px"
                     fontWeight="lighter"
                     color="#757575"
                     outline="none"

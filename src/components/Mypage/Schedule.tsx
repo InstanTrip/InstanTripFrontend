@@ -102,8 +102,8 @@ export default function Schedule() {
                 key={item.plan_id}
                 data-selected={selection.includes(item.plan_id) ? "" : undefined}
                 bgColor="transparent"
-                h={isMobile ? "40px" : "90px"}
-                fontSize={isMobile ? "13px" : "20px"}
+                h={isMobile ? "40px" : "80px"}
+                fontSize={isMobile ? "13px" : "17px"}
             >
                 <Table.Cell>
                     <Checkbox.Root
@@ -297,9 +297,9 @@ export default function Schedule() {
                                 {/* 헤더 */}
                                 <Table.Header>
                                     <Table.Row
-                                        h={isMobile ? "40px" : "90px"}
+                                        h={isMobile ? "40px" : "80px"}
                                         bgColor="#EFEFEF"
-                                        fontSize={isMobile ? "13px" : "20px"}
+                                        fontSize={isMobile ? "13px" : "17px"}
                                     >
                                         <Table.ColumnHeader w="6" pl={isMobile ? "20px" : "40px"}>
                                             <Checkbox.Root

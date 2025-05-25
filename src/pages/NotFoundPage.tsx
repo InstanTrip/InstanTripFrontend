@@ -1,8 +1,21 @@
 import { Box, Flex, Heading, Text, Button, VStack, Image, useBreakpointValue } from '@chakra-ui/react';
+import { useSearchParams } from 'react-router-dom';
 
 import River from '@/assets/river.webp';
 
 const NotFoundPage = () => {
+    // URL에서 id 파라미터 가져오기
+    const [ searchParams ] = useSearchParams();
+    let err_code = searchParams.get('code') || "404";
+
+    // err_code 검증 - 숫자인지 확인
+    if (isNaN(Number(err_code))) {
+        console.error("Invalid error code:", err_code);
+        err_code = "404"; // 기본값으로 설정
+    }
+
+
+
     const pxValue: string = useBreakpointValue({ base: "30px", md: "100px" }) as string;
 
     return (
@@ -59,7 +72,7 @@ const NotFoundPage = () => {
                     color="whiteAlpha.900"
                     letterSpacing="wider"
                 >
-                    404
+                    {err_code}
                 </Heading>
                 <Text fontSize="2xl" fontWeight="semibold" color="whiteAlpha.900">
                     파도에 휩쓸려 페이지를 찾지 못했어요!
