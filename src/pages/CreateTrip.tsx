@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
 import { GridLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
 
+import { getUserData } from '@/utils/Api';
 import { fetchCreateTrip } from '@/utils/Api';
 import { FormatDate } from '@/utils/FormatDate';
-import { getUserData } from '@/utils/Api';
 
-import StatusBar from '@/components/CreateTrip/StatusBar';
-// import TripPeriod from '@/components/TripSetting/TripPeriod';
-import Calender from '@/components/CreateTrip/Calender';
 import Area from '@/components/CreateTrip/Area';
 import Taste from '@/components/CreateTrip/Taste';
+import Calender from '@/components/CreateTrip/Calender';
+import StatusBar from '@/components/CreateTrip/StatusBar';
 
 export default function CreateTrip() {
     // 이 페이지는 여행 일정 만들기 초기 설정 페이지임
@@ -48,7 +47,7 @@ export default function CreateTrip() {
 
     // 리엑트 쿼리로 로그인 상태 가져오기
     const { data: loginResults, error: loginError } = useQuery({
-        queryKey: [],
+        queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         enabled: true,
         retry: 0,
@@ -98,7 +97,7 @@ export default function CreateTrip() {
     }, [startDate, endDate]);
 
     const { data: results , isLoading: isLoading, error: tripError, refetch: refetchCreateTrip } = useQuery({
-        queryKey: [],
+        queryKey: ["createTrip", startDate, endDate, selectedAreas, accommodationTaste, destinationTaste, foodTaste],
         queryFn: () => fetchCreateTrip({
             start_date: FormatDate(startDate),
             end_date: FormatDate(endDate),

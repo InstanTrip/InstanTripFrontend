@@ -1,7 +1,7 @@
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Flex, Box, VStack, Heading, Image, Text, Button, useBreakpointValue } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
 
 import { getUserData, acceptInvite } from '@/utils/Api';
 
@@ -23,8 +23,8 @@ export default function Invite() {
 
 
     // 로그인 체크
-    const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
-        queryKey: ['userData'],
+    const { data: results, error: routeError } = useQuery({
+        queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         retry: 0,
     });

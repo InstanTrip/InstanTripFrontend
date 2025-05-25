@@ -1,24 +1,25 @@
-import { useState, useEffect, useRef, useCallback, use } from 'react';
 import Modal from 'react-modal';
-import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import useWebSocket from 'react-use-websocket';
-import { useQuery } from '@tanstack/react-query';
 import { debounce } from 'lodash';
 import { GridLoader } from 'react-spinners';
-
-import EarthImg from "@/assets/earth.svg";
-import Close from "@/assets/close.svg";
-import Loop from "@/assets/icon_loop.svg";
-import InstanTripOriginLogo from "@/assets/instantrip_origin.webp";
-import TriangleArrow from "@/assets/triangle_arrow.svg";
+import useWebSocket from 'react-use-websocket';
+import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
 
 import MapBox from "@/components/Map/MapBox";
 
-import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
-import { getLocationData, searchLocation } from "@/utils/Api";
-import { FormatDate } from '@/utils/FormatDate';
 import { getUserData } from '@/utils/Api';
+import { FormatDate } from '@/utils/FormatDate';
+import { getLocationData, searchLocation } from "@/utils/Api";
+import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
+
+import Close from "@/assets/close.svg";
+import Loop from "@/assets/icon_loop.svg";
+import EarthImg from "@/assets/earth.svg";
+import TriangleArrow from "@/assets/triangle_arrow.svg";
+import InstanTripOriginLogo from "@/assets/instantrip_origin.webp";
+
 
 interface Node {
     destination_type: string;
@@ -92,8 +93,8 @@ export default function AboutTrip() {
     
 
     // 로그인 체크
-    const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
-        queryKey: ['userData'],
+    const { data: results, error: routeError } = useQuery({
+        queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         retry: 0,
     });
@@ -187,7 +188,7 @@ export default function AboutTrip() {
 
     // 검색
     const { data: searchResults , isLoading: searchIsLoading, error: searchTripError, refetch: refetchSearchCreateTrip } = useQuery({
-        queryKey: [],
+        queryKey: ["searchLocation", locationNodesForPage[dateIndex][selectLocIndex]?.location, locChangeModalSearch],
         queryFn: () => searchLocation(
             locationNodesForPage[dateIndex][selectLocIndex].location.lat,
             locationNodesForPage[dateIndex][selectLocIndex].location.lon,

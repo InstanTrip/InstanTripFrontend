@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 
 import { getUserData, getNickname } from '@/utils/Api';
 
@@ -29,8 +29,8 @@ export default function Mypage() {
     }, [page]);
 
     // 로그인 체크
-    const { data: results, isLoading: isLoading, error: routeError, refetch: refetchRouteData } = useQuery({
-        queryKey: ['userData'],
+    const { data: results, error: routeError } = useQuery({
+        queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         retry: 0,
     });
