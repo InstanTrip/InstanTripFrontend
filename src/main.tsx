@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { lazy, StrictMode } from 'react'
 import { Provider } from "@/components/ui/provider"
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -7,12 +7,12 @@ import { CookiesProvider } from 'react-cookie';
 
 import './index.css'
 
-import Main from './pages/Main';
-import CreateTrip from './pages/CreateTrip';
-import Mypage from './pages/Mypage';
-import AboutTrip from './pages/AboutTrip';
-import NotFoundPage from './pages/NotFoundPage';
-import Invite from './pages/Invite';
+const Main = lazy(() => import("@/pages/Main"));
+const CreateTrip = lazy(() => import("@/pages/CreateTrip"));
+const Mypage = lazy(() => import("@/pages/Mypage"));
+const AboutTrip = lazy(() => import("@/pages/AboutTrip"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+const Invite = lazy(() => import("@/pages/Invite"));
 
 
 // React Query 클라이언트 생성

@@ -79,6 +79,16 @@ export default function AboutTrip() {
 
     // 엑세스 권한이 있는 사용자 목록
     const [ accessUserList, setAccessUserList ] = useState<User[]>([]);
+
+    const time_list = [
+        "9:00",
+        "10:00",
+        "13:00",
+        "14:00",
+        "18:00",
+        "19:00",
+        "21:00",
+    ]
     
 
     // 로그인 체크
@@ -229,7 +239,7 @@ export default function AboutTrip() {
     }
 
 
-
+    const [isFirstConnect, setIsFirstConnect] = useState(true);
 
     // 웹소켓 연결
     const socketUrl = `wss://instantrip.ajb.kr/ws/trip?tripId=${id}`;
@@ -242,7 +252,7 @@ export default function AboutTrip() {
 
     // 첫 연결에 오류가 발생했을 경우 에러페이지로 이동
     useEffect(() => {
-        if (readyState === WebSocket.CLOSED) {
+        if (readyState === WebSocket.CLOSED && isFirstConnect) {
             console.error("웹소켓 연결 실패, 에러페이지로 이동");
             navigate("/error?code=400", { replace: true });
         }
@@ -252,6 +262,9 @@ export default function AboutTrip() {
         // 웹소켓 연결이 성공적으로 이루어졌을 때 메시지 전송
         if (readyState === WebSocket.OPEN) {
             sendMessage(JSON.stringify({ message_type: "JOIN" }));
+            if (isFirstConnect) {
+                setIsFirstConnect(false);
+            }
         }
     }, [readyState]);
 
@@ -837,7 +850,7 @@ export default function AboutTrip() {
                     mt="50px"
                     justifyContent="center"
 
-                    h="calc(100% - 300px)"
+                    h={isMobile ? "calc(100% - 250px)" : "calc(100% - 300px)"}
 
                     gap="5px"
                 >
@@ -854,98 +867,89 @@ export default function AboutTrip() {
                                 w={isMobile ? "10px" : "60px"}
                                 borderRight="1px solid #606060"
                             />
-                                <Flex
-                                    ml="10px"
-                                    mr="10px"
-                                    direction="column"
-                                    w="100%"
-                                >
-                                    {
-                                        locationNodesForPage.length >= 1 && locationNodesForPage[dateIndex].map((location, index) => (
-                                            <Flex
-                                                w="100%"
 
-                                                mt="5px"
-
-                                                direction="column"
-
-                                                key={index}
+                            {/* 장소 데이터 출력 */}
+                            <Flex
+                                ml="10px"
+                                direction="column"
+                                w="100%"
+                                overflowY="auto"
+                            >
+                                {
+                                    locationNodesForPage.length >= 1 && locationNodesForPage[dateIndex].map((location, index) => (
+                                        <Flex
+                                            w="100%"
+                                            mt="5px"
+                                            direction="column"
+                                            key={index}
+                                        >
+                                            <Text
+                                                fontSize={isMobile ? "17px" : "20px"}
                                             >
-                                                <Text
-                                                    fontSize={isMobile ? "17px" : "20px"}
-                                                >
-                                                    {index + 1}번째
-                                                </Text>
+                                                {index + 1}. {time_list[index]}
+                                            </Text>
+                                            <Flex
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                pl={isMobile ? "10px" : "20px"}
+                                                mt="5px"
+                                                w="100%"
+                                            >
                                                 <Flex
-                                                    justifyContent="space-between"
                                                     alignItems="center"
-
-                                                    pl={isMobile ? "10px" : "20px"}
-                                                    mt="5px"
-
-                                                    w="100%"
                                                 >
-                                                    <Flex
-                                                        alignItems="center"
+                                                    <Box
+                                                        w={isMobile ? "60px" : "75px"}
+                                                        h={isMobile ? "60px" : "75px"}
+                                                        borderRadius="15px"
+                                                        overflow="hidden"
                                                     >
-                                                        <Box
+                                                        <Image
                                                             w={isMobile ? "60px" : "75px"}
                                                             h={isMobile ? "60px" : "75px"}
-                                                            borderRadius="15px"
-                                                            overflow="hidden"
-                                                        >
-                                                            <Image
-                                                                w={isMobile ? "60px" : "75px"}
-                                                                h={isMobile ? "60px" : "75px"}
-                                                                src={
-                                                                    !location.image || location.image.length === 0 ? InstanTripOriginLogo.replace("http://", "https://") : location.image[0]
-                                                                }
-                                                                loading="lazy"
-                                                            />
-                                                        </Box>
-
-                                                        <Box
-                                                            pl="15px"
-                                                            pt="5px"
-                                                        >
-                                                            <Text fontSize="17px" color="#606060">
-                                                                {location.title}
-                                                            </Text>
-                                                            <Text fontSize="12px" color="#B0B0B0">
-                                                                {location.address}
-                                                            </Text>
-                                                        </Box>
-                                                    </Flex>
-
-                                                    <Flex
-                                                        justifyContent="center"
-                                                        alignItems="center"
-                                                        border="1px solid #E9E9E9"
-                                                        borderRadius="15px"
-
-                                                        w="80px"
-                                                        h="35px"
-
-                                                        cursor="pointer"
-
-                                                        transition="0.3s all ease-in-out"
-
-                                                        _hover={{
-                                                            backgroundColor: "#E9E9E9",
-                                                        }}
-                                                    
-                                                        onClick={() => changeLocation(index)}
+                                                            src={
+                                                                !location.image || location.image.length === 0 ? InstanTripOriginLogo.replace("http://", "https://") : location.image[0]
+                                                            }
+                                                            loading="lazy"
+                                                        />
+                                                    </Box>
+                                                    <Box
+                                                        pl="15px"
+                                                        pt="5px"
                                                     >
-                                                        <Text
-                                                            color="#696969"
-                                                        >
-                                                            교체
+                                                        <Text fontSize="17px" color="#606060">
+                                                            {location.title}
                                                         </Text>
-                                                    </Flex>
+                                                        <Text fontSize="12px" color="#B0B0B0">
+                                                            {location.address}
+                                                        </Text>
+                                                    </Box>
+                                                </Flex>
+                                                <Flex
+                                                    justifyContent="center"
+                                                    alignItems="center"
+                                                    border="1px solid #E9E9E9"
+                                                    borderRadius="15px"
+                                                    w="80px"
+                                                    h="35px"
+                                                    cursor="pointer"
+                                                    transition="0.3s all ease-in-out"
+                                                    _hover={{
+                                                        backgroundColor: "#E9E9E9",
+                                                    }}
+                                                
+                                                    onClick={() => changeLocation(index)}
+                                                >
+                                                    <Text
+                                                        color="#696969"
+                                                    >
+                                                        교체
+                                                    </Text>
                                                 </Flex>
                                             </Flex>
-                                        ))
-                                    }
+                                        </Flex>
+                                    ))
+                                }
                             </Flex>
                         </Flex>
                     </Flex>
