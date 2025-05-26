@@ -20,6 +20,7 @@ import Loop from "@/assets/icon_loop.svg";
 import EarthImg from "@/assets/earth.svg";
 import TriangleArrow from "@/assets/triangle_arrow.svg";
 import InstanTripOriginLogo from "@/assets/instantrip_origin.webp";
+import BlueRibbon from "@/assets/blueribbon.webp";
 
 
 interface Node {
@@ -535,8 +536,6 @@ export default function AboutTrip() {
                         h="calc(100% - 385px)"
 
                         direction="column"
-
-                        gap="10px"
                     >
                         <Flex
                             justifyContent="space-between"
@@ -544,6 +543,7 @@ export default function AboutTrip() {
 
                             w="100%"
                             pr="10px"
+                            py="5px"
                         >
                             <Text
                                 color="#848484"
@@ -595,6 +595,21 @@ export default function AboutTrip() {
                                     }
                             </Flex>
                         </Flex>
+
+                        {
+                            locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].ribbon_count ? (
+                                <Flex
+                                    alignItems="center"
+                                    gap="5px"
+                                >
+                                    <Image
+                                        src={BlueRibbon}
+                                        alt="blue ribbon"
+                                        h="20px"
+                                    />
+                                </Flex>
+                            ) : null
+                        }
 
                         <Flex
                             overflowY="auto"
@@ -1110,9 +1125,32 @@ export default function AboutTrip() {
                                                         pl="15px"
                                                         pt="5px"
                                                     >
-                                                        <Text fontSize="17px" color="#606060">
-                                                            {location.title}
-                                                        </Text>
+                                                        <Flex
+                                                            alignItems="center"
+                                                            h="100%"
+
+                                                            gap="3px"
+                                                        >
+                                                            <Text fontSize="17px" color="#606060">
+                                                                {location.title}
+
+                                                            </Text>
+                                                            {
+                                                                location.ribbon_count ? (
+                                                                    <Flex
+                                                                        alignItems="center"
+                                                                        h="100%"
+                                                                        gap="5px"
+                                                                    >
+                                                                        <Image
+                                                                            src={BlueRibbon}
+                                                                            alt="blue ribbon"
+                                                                            h="20px"
+                                                                            />
+                                                                    </Flex>
+                                                                ) : null
+                                                            }
+                                                        </Flex>
                                                         <Text fontSize="12px" color="#B0B0B0">
                                                             {location.address}
                                                         </Text>
