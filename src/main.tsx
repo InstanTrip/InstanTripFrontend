@@ -7,6 +7,14 @@ import { CookiesProvider } from 'react-cookie';
 
 import './index.css'
 
+// import Main from './pages/Main';
+// import CreateTrip from './pages/CreateTrip';
+// import Mypage from './pages/Mypage';
+// import AboutTrip from './pages/AboutTrip';
+// import NotFoundPage from './pages/NotFoundPage';
+// import Invite from './pages/Invite';
+
+
 const Main = lazy(() => import("@/pages/Main"));
 const CreateTrip = lazy(() => import("@/pages/CreateTrip"));
 const Mypage = lazy(() => import("@/pages/Mypage"));

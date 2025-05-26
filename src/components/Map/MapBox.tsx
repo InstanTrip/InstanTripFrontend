@@ -75,7 +75,7 @@ const fetchRouteData = async (loc_data: MobilityQuery) => {
     return response.data;
 };
 
-export default function MapBox({ locationData, dateIndex }: { locationData: number[][], dateIndex: number }) {
+export default function MapBox({ locationData, dateIndex, openLocDetailModal }: { locationData: number[][], dateIndex: number, openLocDetailModal: (index: number) => void }) {
     const [ loading, error ] = useKakaoLoader(
         {
             appkey: "e55ce2f428ca6e286c849083454b41cf"
@@ -188,24 +188,52 @@ export default function MapBox({ locationData, dateIndex }: { locationData: numb
 
             {
                 locationData.map((loc, index) => (
-                    <MapMarker
-                        key={index}
-                        position={{
-                            lat: loc[0],
-                            lng: loc[1]
-                        }}
-                        image={{
-                            src: dateIndex === 0 ?
-                                    pins[index] :
-                                        index === 0 ?
-                                            homePin : pins[index - 1],
-                            size: {
-                                width: 50,
-                                height: 50
-                            }
-                        }}
-                        // zIndex={index + 1}
-                    />
+                    <>
+                        {
+                            locationData.length > 7 && index === 0 ? (
+                                <MapMarker
+                                    key={index}
+                                    position={{
+                                        lat: loc[0],
+                                        lng: loc[1]
+                                    }}
+                                    image={{
+                                        src: dateIndex === 0 ?
+                                                pins[index] :
+                                                    index === 0 ?
+                                                        homePin : pins[index - 1],
+                                        size: {
+                                            width: 50,
+                                            height: 50
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <MapMarker
+                                    key={index}
+                                    position={{
+                                        lat: loc[0],
+                                        lng: loc[1]
+                                    }}
+                                    image={{
+                                        src: dateIndex === 0 ?
+                                                pins[index] :
+                                                    index === 0 ?
+                                                        homePin : pins[index - 1],
+                                        size: {
+                                            width: 50,
+                                            height: 50
+                                        }
+                                    }}
+                                    
+                                    clickable={true}
+                                    onClick={() => openLocDetailModal(
+                                        locationData.length > 7 ? index - 1 : index
+                                    )}
+                                />
+                            )
+                        }
+                    </>
                 ))
             }
         </Map>

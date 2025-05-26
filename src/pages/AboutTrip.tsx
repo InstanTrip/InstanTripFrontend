@@ -14,6 +14,7 @@ import { FormatDate } from '@/utils/FormatDate';
 import { getLocationData, searchLocation } from "@/utils/Api";
 import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
 
+import Call from "@/assets/call.svg";
 import Close from "@/assets/close.svg";
 import Loop from "@/assets/icon_loop.svg";
 import EarthImg from "@/assets/earth.svg";
@@ -70,13 +71,16 @@ export default function AboutTrip() {
     // 장소 변경 모달창 관련 변수
     const [ locChangeModalIsOpen, setLocChangeModalIsOpen ] = useState(false);
     const [ locChangeModalSearch, setLocChangeModalSearch ] = useState("");
-    // 현재 장소의 인덱스
-    const [ selectLocIndex, setSelectLocIndex ] = useState<number>(0);
+    // 선택된 장소의 인덱스
+    const [ selectIndex, setSelectIndex ] = useState<number>(0);
     // 검색결과
     const [ locChangeModalSearchResult, setLocChangeModalSearchResult ] = useState<SearchResult[]>([]);
     
     // 일정 공유 모달창 관련 변수
     const [ accessModalIsOpen, setAccessModalIsOpen ] = useState(false);
+
+    // 장소 상세 모달창 관련 변수
+    const [ locDetailModalIsOpen, setLocDetailModalIsOpen ] = useState(false);
 
     // 엑세스 권한이 있는 사용자 목록
     const [ accessUserList, setAccessUserList ] = useState<User[]>([]);
@@ -172,7 +176,7 @@ export default function AboutTrip() {
     // 모달창 띄워서 새 장소 받음, 모달창 띄우는 코드
     const changeLocation = (index: number) => {
         setLocChangeModalSearch("");
-        setSelectLocIndex(index);
+        setSelectIndex(index);
         
         setLocChangeModalIsOpen(true);
     }
@@ -182,16 +186,17 @@ export default function AboutTrip() {
     const closeModal = () => {
         setLocChangeModalIsOpen(false);
         setAccessModalIsOpen(false);
+        setLocDetailModalIsOpen(false);
         setLocChangeModalSearchResult([]);
         setLocChangeModalSearch("");
     }
 
     // 검색
     const { data: searchResults , isLoading: searchIsLoading, error: searchTripError, refetch: refetchSearchCreateTrip } = useQuery({
-        queryKey: ["searchLocation", locationNodesForPage[dateIndex][selectLocIndex]?.location, locChangeModalSearch],
+        queryKey: ["searchLocation"],
         queryFn: () => searchLocation(
-            locationNodesForPage[dateIndex][selectLocIndex].location.lat,
-            locationNodesForPage[dateIndex][selectLocIndex].location.lon,
+            locationNodesForPage[dateIndex][selectIndex].location.lat,
+            locationNodesForPage[dateIndex][selectIndex].location.lon,
             locationNodes[dateIndex].location,
             locChangeModalSearch
         ),
@@ -209,6 +214,7 @@ export default function AboutTrip() {
     const debouncedSearch = useRef(debounce(() => {
         refetchSearchCreateTrip();
     }, 300)).current;
+
     useEffect(() => {
         if (locChangeModalSearch.length >= 2) {
             debouncedSearch();
@@ -231,12 +237,24 @@ export default function AboutTrip() {
             sendMessage(JSON.stringify({
                 message_type: "UPDATE",
                 date: FormatDate(date),
-                index: selectLocIndex,
+                index: selectIndex,
                 destination_type: destination_type,
                 destination_id: destination_id,
                 memo: ""
             }));
         }
+    }
+
+
+
+
+
+
+
+    // 장소 상세 모달창 띄우기
+    const openLocDetailModal = (index: number) => {
+        setSelectIndex(index);
+        setLocDetailModalIsOpen(true);
     }
 
 
@@ -337,6 +355,7 @@ export default function AboutTrip() {
                 const resTempLocData = responses.map(res => res.data);
 
                 setLocationNodesForPage(resTempLocData);
+                console.log("장소 데이터 요청 성공:", resTempLocData);
             } catch (error) {
                 console.error("장소 데이터 요청 실패:", error);
             }
@@ -432,6 +451,176 @@ export default function AboutTrip() {
                     color="white"
                 />
             </Flex>
+
+            {/* 장소 데이터 알려줌 */}
+            <Modal
+                isOpen={locDetailModalIsOpen}
+                onRequestClose={closeModal}
+                style={
+                    {
+                        overlay: {
+                            backgroundColor: '#000000A0',
+                            zIndex: 1000,
+                        },
+                        content: {
+                            top: '50%',
+                            left: '50%',
+                            right: 'auto',
+                            bottom: 'auto',
+                            width: changeLocModalWidth,
+                            height: changeLocModalHeight,
+                            marginRight: '-50%',
+                            background: "#F4F4F4",
+                            border: "none",
+                            borderRadius: "25px",
+                            transform: 'translate(-50%, -50%)',
+                            padding: "40px",
+                        }
+                    }
+                }
+                contentLabel=""
+            >
+                <Flex
+                    direction="column"
+                    h="100%"
+                    w="100%"
+                >
+                    <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        w="100%"
+                    >
+                        <Text
+                            fontSize={changeLocModalTitle}
+                            color="#5A5A5A"
+                        >
+                            {
+                                locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 &&
+                                    locationNodesForPage[dateIndex][selectIndex].title
+                            }
+                        </Text>
+                        <Image
+                            src={Close}
+                            alt="close"
+                            onClick={closeModal}
+                            cursor="pointer"
+                        />
+                    </Flex>
+
+                    <Flex
+                        mt="25px"
+                    >
+                        <Box
+                            w="100%"
+                            h="300px"
+                            flexShrink={0}
+                            mx="5px"
+                            borderRadius="15px"
+                            overflow="hidden"
+                            css={{
+                                scrollSnapAlign: 'start',
+                            }}
+                        >
+                            <Image
+                                w="100%"
+                                h="100%"
+                                src={locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].image && locationNodesForPage[dateIndex][selectIndex].image.length > 0 ?  locationNodesForPage[dateIndex][selectIndex].image[0] : InstanTripOriginLogo}
+                                loading="lazy"
+                            />
+                        </Box>
+
+                    </Flex>
+                    <Flex
+                        w="100%"
+                        h="calc(100% - 385px)"
+
+                        direction="column"
+
+                        gap="10px"
+                    >
+                        <Flex
+                            justifyContent="space-between"
+                            alignItems="center"
+
+                            w="100%"
+                            pr="10px"
+                        >
+                            <Text
+                                color="#848484"
+                            >
+                                {
+                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 &&
+                                    locationNodesForPage[dateIndex][selectIndex].address
+                                }
+                            </Text>
+                                
+                            {/* 전화 */}
+                            <Flex>
+                                {
+                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].tel && locationNodesForPage[dateIndex][selectIndex].tel !== "" ?
+                                    (
+                                        <Flex
+                                            w="45px"
+                                            h="45px"
+
+                                            rounded="10px"
+
+                                            justifyContent="center"
+                                            alignItems="center"
+                                            
+                                            bg="#66CC54"
+
+                                            _hover={{
+                                                backgroundColor: "#148300",
+                                            }}
+
+                                            color="white"
+                                            onClick={() => {
+                                                window.open(`tel:${locationNodesForPage[dateIndex][selectIndex].tel}`);
+                                            }}
+                                            cursor={locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 && locationNodesForPage[dateIndex][selectIndex].tel ? "pointer" : "not-allowed"}
+
+                                            transition="0.3s all ease-in-out"
+                                        >
+                                            <Image
+                                                src={Call}
+                                                alt="call"
+                                                w="23px"
+                                                h="23px"
+                                            />
+                                        </Flex>
+                                        )
+                                        : null
+                                        
+                                    }
+                            </Flex>
+                        </Flex>
+
+                        <Flex
+                            overflowY="auto"
+                            h="100%"
+                        >
+                            <Text
+                                whiteSpace="pre-wrap"
+                            >
+                                {
+                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 && locationNodesForPage[dateIndex][selectIndex].description &&
+                                        locationNodesForPage[dateIndex][selectIndex].description
+                                            .replaceAll("<br />", "\n")
+                                            .replace("<br>" , "\n")
+                                            .replaceAll("<br/>", "\n")
+                                            .replaceAll("&lt;", "<")
+                                            .replaceAll("&gt;", ">")
+                                            .replaceAll("&amp;", "&")
+                                            .replaceAll("&nbsp;", " ")
+                                            .replaceAll("&quot;", "\"")
+                                            .replaceAll("&apos;", "'")
+                                }
+                            </Text>
+                        </Flex>
+                    </Flex>
+                </Flex>
+            </Modal>
 
             {/* 장소 교체 모달창 */}
             <Modal
@@ -898,6 +1087,9 @@ export default function AboutTrip() {
                                             >
                                                 <Flex
                                                     alignItems="center"
+
+                                                    onClick={() => openLocDetailModal(index)}
+                                                    cursor="pointer"
                                                 >
                                                     <Box
                                                         w={isMobile ? "60px" : "75px"}
@@ -968,6 +1160,7 @@ export default function AboutTrip() {
                 <MapBox
                     locationData={locationData}
                     dateIndex={dateIndex}
+                    openLocDetailModal={openLocDetailModal}
                 />
             </Box>
 
