@@ -146,13 +146,17 @@ export default function AboutTrip() {
             setDate(newDate);
         }
     }
-    const [ minDate, setMinDate] = useState<Date>(new Date());
-    const [ maxDate, setMaxDate] = useState<Date>(new Date());
-    const [ dateIndex, setDateIndex] = useState<number>(0);
+    const [ minDate, setMinDate ] = useState<Date>(new Date());
+    const [ maxDate, setMaxDate ] = useState<Date>(new Date());
+    const [ dateIndex, setDateIndex ] = useState<number>(0);
     useEffect(() => {
         // 날짜가 바뀔 때마다 index 바꿈
         const newDate = new Date(date);
-        const newDateIndex = locationNodes.findIndex((node) => node.date === newDate.toISOString().split("T")[0]);
+        let newDateIndex = locationNodes.findIndex((node) => node.date === newDate.toISOString().split("T")[0]);
+        if (newDateIndex === -1) {
+            newDateIndex = 0; // 해당 날짜가 없으면 0으로 설정
+        }
+        console.log(newDateIndex);
         setDateIndex(newDateIndex);
     }, [date]);
 
@@ -373,6 +377,7 @@ export default function AboutTrip() {
                 const lastNode = locationNodesForPage[dateIndex - 1][locationNodesForPage[dateIndex - 1].length - 1];
                 lat_lng.push([lastNode.location.lat, lastNode.location.lon]);
             }
+            console.log("aaa", dateIndex)
             for (let node of locationNodesForPage[dateIndex]) {
                 lat_lng.push([node.location.lat, node.location.lon]);
             }
@@ -496,7 +501,7 @@ export default function AboutTrip() {
                             color="#5A5A5A"
                         >
                             {
-                                locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 &&
+                                locationNodesForPage && locationNodesForPage[dateIndex] && locationNodesForPage[dateIndex][selectIndex].title &&
                                     locationNodesForPage[dateIndex][selectIndex].title
                             }
                         </Text>
@@ -525,7 +530,14 @@ export default function AboutTrip() {
                             <Image
                                 w="100%"
                                 h="100%"
-                                src={locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].image && locationNodesForPage[dateIndex][selectIndex].image.length > 0 ?  locationNodesForPage[dateIndex][selectIndex].image[0] : InstanTripOriginLogo}
+                                src={
+                                    locationNodesForPage && locationNodesForPage.length > 0 &&
+                                        locationNodesForPage[dateIndex] &&
+                                        locationNodesForPage[dateIndex][selectIndex] &&
+                                        locationNodesForPage[dateIndex][selectIndex].image &&
+                                        locationNodesForPage[dateIndex][selectIndex].image.length > 0 ?
+                                        locationNodesForPage[dateIndex][selectIndex].image[0] : InstanTripOriginLogo
+                                }
                                 loading="lazy"
                             />
                         </Box>
@@ -549,15 +561,22 @@ export default function AboutTrip() {
                                 color="#848484"
                             >
                                 {
-                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 &&
-                                    locationNodesForPage[dateIndex][selectIndex].address
+                                    locationNodesForPage &&
+                                        locationNodesForPage.length > 0 &&
+                                        locationNodesForPage[dateIndex] &&
+                                        locationNodesForPage[dateIndex].length > 0 &&
+                                            locationNodesForPage[dateIndex][selectIndex].address
                                 }
                             </Text>
                                 
                             {/* 전화 */}
                             <Flex>
                                 {
-                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].tel && locationNodesForPage[dateIndex][selectIndex].tel !== "" ?
+                                    locationNodesForPage &&
+                                        locationNodesForPage.length > 0 &&
+                                        locationNodesForPage[dateIndex] &&
+                                        locationNodesForPage[dateIndex][selectIndex].tel &&
+                                        locationNodesForPage[dateIndex][selectIndex].tel !== "" ?
                                     (
                                         <Flex
                                             w="45px"
@@ -597,7 +616,10 @@ export default function AboutTrip() {
                         </Flex>
 
                         {
-                            locationNodesForPage.length > 0 && locationNodesForPage[dateIndex][selectIndex].ribbon_count ? (
+                            locationNodesForPage &&
+                            locationNodesForPage.length > 0 &&
+                            locationNodesForPage[dateIndex] &&
+                                locationNodesForPage[dateIndex][selectIndex].ribbon_count ? (
                                 <Flex
                                     alignItems="center"
                                     gap="5px"
@@ -619,17 +641,22 @@ export default function AboutTrip() {
                                 whiteSpace="pre-wrap"
                             >
                                 {
-                                    locationNodesForPage.length > 0 && locationNodesForPage[dateIndex].length > 0 && locationNodesForPage[dateIndex][selectIndex].description &&
-                                        locationNodesForPage[dateIndex][selectIndex].description
-                                            .replaceAll("<br />", "\n")
-                                            .replace("<br>" , "\n")
-                                            .replaceAll("<br/>", "\n")
-                                            .replaceAll("&lt;", "<")
-                                            .replaceAll("&gt;", ">")
-                                            .replaceAll("&amp;", "&")
-                                            .replaceAll("&nbsp;", " ")
-                                            .replaceAll("&quot;", "\"")
-                                            .replaceAll("&apos;", "'")
+                                    locationNodesForPage &&
+                                        locationNodesForPage.length > 0 &&
+                                        locationNodesForPage[dateIndex] &&
+                                        locationNodesForPage[dateIndex].length > 0 &&
+                                        locationNodesForPage[dateIndex][selectIndex] &&
+                                        locationNodesForPage[dateIndex][selectIndex].description &&
+                                            locationNodesForPage[dateIndex][selectIndex].description
+                                                .replaceAll("<br />", "\n")
+                                                .replace("<br>" , "\n")
+                                                .replaceAll("<br/>", "\n")
+                                                .replaceAll("&lt;", "<")
+                                                .replaceAll("&gt;", ">")
+                                                .replaceAll("&amp;", "&")
+                                                .replaceAll("&nbsp;", " ")
+                                                .replaceAll("&quot;", "\"")
+                                                .replaceAll("&apos;", "'")
                                 }
                             </Text>
                         </Flex>
@@ -1029,8 +1056,8 @@ export default function AboutTrip() {
 
                         onClick={dayDown}
 
-                        opacity={date.getTime() === minDate.getTime() ? 0.5 : 1}
-                        cursor={date.getTime() === minDate.getTime() ? "not-allowed" : "pointer"}
+                        opacity={FormatDate(date) === FormatDate(minDate) ? 0.5 : 1}
+                        cursor={FormatDate(date) === FormatDate(minDate) ? "not-allowed" : "pointer"}
                     >
                         ⏴
                     </Text>
@@ -1044,8 +1071,8 @@ export default function AboutTrip() {
 
                         onClick={dayUp}
 
-                        opacity={date.getTime() === maxDate.getTime() ? 0.5 : 1}
-                        cursor={date.getTime() === maxDate.getTime() ? "not-allowed" : "pointer"}
+                        opacity={FormatDate(date) === FormatDate(maxDate) ? 0.5 : 1}
+                        cursor={FormatDate(date) === FormatDate(maxDate) ? "not-allowed" : "pointer"}
                     >
                         ⏵
                     </Text>
@@ -1081,7 +1108,10 @@ export default function AboutTrip() {
                                 overflowY="auto"
                             >
                                 {
-                                    locationNodesForPage.length >= 1 && locationNodesForPage[dateIndex].map((location, index) => (
+                                    locationNodesForPage &&
+                                        locationNodesForPage.length > 0 &&
+                                        locationNodesForPage[dateIndex] &&
+                                        locationNodesForPage[dateIndex].map((location, index) => (
                                         <Flex
                                             w="100%"
                                             mt="5px"
