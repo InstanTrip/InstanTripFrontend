@@ -29,7 +29,7 @@ export default function Mypage() {
     }, [page]);
 
     // 로그인 체크
-    const { data: results, error: routeError } = useQuery({
+    const { data: results, error: loginError } = useQuery({
         queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         retry: 0,
@@ -46,14 +46,14 @@ export default function Mypage() {
                 setUserEmail(results.data.email);
             }
         }
-        if (routeError) {
-            // Check if routeError has a 'status' property
-            if (typeof (routeError as any).status === 'number' && (routeError as any).status === 401) {
+        if (loginError) {
+            // Check if loginError has a 'status' property
+            if (typeof (loginError as any).status === 'number' && (loginError as any).status === 401) {
                 alert("로그인이 필요합니다.");
                 navigate('/', { replace: true });
             }
         }
-    }, [results, routeError, navigate]);
+    }, [results, loginError, navigate]);
 
     // 사용자 닉네임 가져오기
     const { data: nicknameData, isLoading: isNicknameLoading, error: nicknameError, refetch: refetchNickname } = useQuery({

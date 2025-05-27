@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useQuery } from '@tanstack/react-query'
 import { Flex, Box, Text, Link, useBreakpointValue } from "@chakra-ui/react";
 
@@ -10,7 +10,7 @@ export default function Main() {
     const [isLogin, setIsLogin] = useState(false); // 로그인 상태
 
     // 리엑트 쿼리로 로그인 상태 가져오기
-    const { data: results } = useQuery({
+    const { data: results, error: loginError } = useQuery({
         queryKey: ["isLogin"],
         queryFn: () => getUserData(),
         enabled: true,
@@ -28,7 +28,10 @@ export default function Main() {
                 setIsLogin(false);
             }
         }
-    }, [results]);
+        if (loginError) {
+            setIsLogin(false);
+        }
+    }, [results, loginError]);
 
     const handleLogout = () => {
         logout();
