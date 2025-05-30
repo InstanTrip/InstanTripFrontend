@@ -278,7 +278,7 @@ export default function AboutTrip() {
     useEffect(() => {
         if (readyState === WebSocket.CLOSED && isFirstConnect) {
             console.error("웹소켓 연결 실패, 에러페이지로 이동");
-            navigate("/error?code=400", { replace: true });
+            navigate("/error?code=403", { replace: true });
         }
     }, [readyState, navigate]);
 

@@ -115,15 +115,17 @@ export default function CreateTrip() {
 
     // 여행 일정이 생성되었을 경우
     useEffect(() => {
+        if (results) {
+            console.log("여행 일정 생성 결과", results);
+            
+            navigate(`/aboutrip?id=${results.data.plan_id}`);
+        }
         if (tripError) {
+            console.log(FormatDate(startDate), FormatDate(endDate), selectedAreas, accommodationTaste, destinationTaste, foodTaste);
+            console.log("여행 일정 생성 에러", tripError);
             alert("여행 일정 생성을 하려면 로그인이 필요합니다.");
             navigate("/oauth2/authorization/cognito?prompt=login")
             return;
-        }
-        if (results) {
-            console.log("여행 일정 생성 결과", results);
-
-            navigate(`/aboutrip?id=${results.data.plan_id}`);
         }
     }, [results, tripError]);
 
