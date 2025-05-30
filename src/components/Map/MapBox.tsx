@@ -93,23 +93,32 @@ export default function MapBox({ locationData, dateIndex, openLocDetailModal }: 
 
     useEffect(() => {
         if (locationData.length > 0) {
+            let waypoints: number[][] = [];
+            for (let loc_data of locationData) {
+                if (!(loc_data[0] == 0 || loc_data[1] == 0)) {
+                    waypoints.push(loc_data);
+                }
+            }
+
             // 카카오 모빌리티에서 가져오기
             setReqQuery(
                 {
                     origin: {
-                    x: String(locationData[0][1]),
-                    y: String(locationData[0][0]),
+                    x: String(waypoints[0][1]),
+                    y: String(waypoints[0][0]),
                     angle: 270,
                 },
                     destination: {
-                    x: String(locationData[locationData.length - 1][1]),
-                    y: String(locationData[locationData.length - 1][0]),
+                    x: String(waypoints[waypoints.length - 1][1]),
+                    y: String(waypoints[waypoints.length - 1][0]),
                 },
-                    waypoints: locationData.slice(1, -1).map((loc, index) => ({
-                    name: `Waypoint ${index + 1}`,
-                    x: String(loc[1]),
-                    y: String(loc[0]),
-                    })),
+                    waypoints: waypoints.slice(1, -1).map((loc, index) => (
+                        {
+                            name: `Waypoint ${index + 1}`,
+                            x: String(loc[1]),
+                            y: String(loc[0]),
+                        }
+                    )),
                     priority: "RECOMMEND",
                     car_fuel: "GASOLINE",
                     car_hipass: true,
@@ -133,16 +142,17 @@ export default function MapBox({ locationData, dateIndex, openLocDetailModal }: 
             if (results.routes[0].result_code != 0) {
                 // 카카오 모빌리티에서 값을 가져오지 못한 경우 단순 좌표값 이어 그리기
                 for (let loc of locationData) {
-                    linepath.push({
-                        lat: loc[0],
-                        lng: loc[1],
-                    });
+                    if (!(loc[0] == 0 || loc[1] == 0)) {
+                        linepath.push({
+                            lat: loc[0],
+                            lng: loc[1],
+                        });
+                    }
                 }
                 setPath(linepath);
                 return;
             }
             if (results.routes[0].sections && results.routes[0].sections.length > 0) {
-                console.log("results", results);
                 for (const section of results.routes[0].sections) {
                     for (const road of section.roads) {
                         for (let i = 0; i < road.vertexes.length; i++) {
