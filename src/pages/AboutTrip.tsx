@@ -127,7 +127,12 @@ export default function AboutTrip() {
 
 
     // 날짜 관련
-    const [ date, setDate ] = useState<Date>(new Date());
+    const [ date, setDate ] = useState<Date>(() => {
+        const d = new Date();
+        d.setHours(9, 0, 0, 0);
+        return d;
+    });
+
     const dayUp = () => {
         // 날짜를 하루 올림
         // maxDate보다 크면 안됨
