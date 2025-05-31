@@ -137,7 +137,7 @@ export default function Schedule() {
                     }}
                 
                     cursor="pointer"
-                >{item.taste["accommodation_taste"].length > 0 ? `${item.taste["accommodation_taste"][0]}, ` : null}{item.taste["destination_taste"].length > 0 ? `${item.taste["destination_taste"][0]}, ` : null}{item.taste["restaurant_taste"].length > 0 ? `${item.taste["restaurant_taste"][0]}, ` : null}</Table.Cell>
+                >{item.taste["accommodation_taste"].length > 0 ? `${item.taste["accommodation_taste"][0]}, ` : null}{item.taste["destination_taste"].length > 0 ? `${item.taste["destination_taste"][0]}, ` : null}{item.taste["restaurant_taste"].length > 0 ? `${item.taste["restaurant_taste"][0]}` : null}</Table.Cell>
                 <Table.Cell
                     onClick={() => {
                         navigate(`/aboutrip?id=${item.plan_id}`);
