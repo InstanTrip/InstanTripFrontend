@@ -306,6 +306,8 @@ export default function AboutTrip() {
             if (data.type === "JOIN" || data.type === "UPDATE") {
                 const plan = data.plan;
 
+                console.log("웹소켓 메시지 수신:", plan);
+
                 // 장소 데이터 업데이트
                 setLocationNodes(plan.destinations);
                 // 엑세스 권한이 있는 사용자 목록 업데이트
@@ -624,17 +626,20 @@ export default function AboutTrip() {
                             locationNodesForPage &&
                             locationNodesForPage.length > 0 &&
                             locationNodesForPage[dateIndex] &&
-                                locationNodesForPage[dateIndex][selectIndex].ribbon_count ? (
-                                <Flex
-                                    alignItems="center"
-                                    gap="5px"
-                                >
-                                    <Image
-                                        src={BlueRibbon}
-                                        alt="blue ribbon"
-                                        h="20px"
-                                    />
-                                </Flex>
+                            locationNodesForPage[dateIndex][selectIndex].ribbon_count &&
+                                locationNodesForPage[dateIndex][selectIndex].ribbon_count > 0 ? (
+                                    <Flex alignItems="center" gap="5px">
+                                        {Array.from(
+                                            { length: locationNodesForPage[dateIndex][selectIndex].ribbon_count }
+                                        ).map((_, idx) => (
+                                            <Image
+                                            key={idx}
+                                            src={BlueRibbon}
+                                            alt="blue ribbon"
+                                            h="20px"
+                                            />
+                                        ))}
+                                    </Flex>
                             ) : null
                         }
 
@@ -1171,17 +1176,20 @@ export default function AboutTrip() {
 
                                                             </Text>
                                                             {
-                                                                location.ribbon_count ? (
+                                                                location.ribbon_count > 0 ? (
                                                                     <Flex
                                                                         alignItems="center"
                                                                         h="100%"
                                                                         gap="5px"
                                                                     >
-                                                                        <Image
-                                                                            src={BlueRibbon}
-                                                                            alt="blue ribbon"
-                                                                            h="20px"
+                                                                        {Array.from({ length: location.ribbon_count }).map((_, idx) => (
+                                                                            <Image
+                                                                                key={idx}
+                                                                                src={BlueRibbon}
+                                                                                alt="blue ribbon"
+                                                                                h="20px"
                                                                             />
+                                                                        ))}
                                                                     </Flex>
                                                                 ) : null
                                                             }
