@@ -1,5 +1,6 @@
-import React, { useState, useEffect, use } from "react"
+import React, { useState, useEffect } from "react"
 import { Flex, Text, Table, Checkbox, Pagination, ButtonGroup, IconButton, NativeSelect, useBreakpointValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu"
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,9 @@ interface Trip {
 
 export default function Schedule() {
     const isMobile = useBreakpointValue({ base: true, md: false });
+    
+    const isLightMode = useColorModeValue(true, false);
+    const textColor = useColorModeValue("#696969", "#dddddd");
 
     const navigate = useNavigate();
 
@@ -105,7 +109,9 @@ export default function Schedule() {
                 h={isMobile ? "40px" : "80px"}
                 fontSize={isMobile ? "13px" : "17px"}
             >
-                <Table.Cell>
+                <Table.Cell
+                    borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+                >
                     <Checkbox.Root
                         size="sm"
                         pl={isMobile ? "10px" : "30px"}
@@ -129,12 +135,16 @@ export default function Schedule() {
                         navigate(`/aboutrip?id=${item.plan_id}`);
                     }}
                 
+                    borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+
                     cursor="pointer"
                 >{item.location.join(", ")}</Table.Cell>
                 <Table.Cell
                     onClick={() => {
                         navigate(`/aboutrip?id=${item.plan_id}`);
                     }}
+
+                    borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
                 
                     cursor="pointer"
                 >{item.taste["accommodation_taste"].length > 0 ? `${item.taste["accommodation_taste"][0]}, ` : null}{item.taste["destination_taste"].length > 0 ? `${item.taste["destination_taste"][0]}, ` : null}{item.taste["restaurant_taste"].length > 0 ? `${item.taste["restaurant_taste"][0]}` : null}</Table.Cell>
@@ -143,6 +153,8 @@ export default function Schedule() {
                         navigate(`/aboutrip?id=${item.plan_id}`);
                     }}
                 
+                    borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+
                     cursor="pointer"
                     textAlign="end"
                 >{item.plan_start}</Table.Cell>
@@ -151,6 +163,8 @@ export default function Schedule() {
                         navigate(`/aboutrip?id=${item.plan_id}`);
                     }}
                 
+                    borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+
                     cursor="pointer"
                     textAlign="end"
                     pr={isMobile ? "5px" : "40px"}
@@ -202,7 +216,7 @@ export default function Schedule() {
                                     w={isMobile ? "75px" : "126px"}
                                     h={isMobile ? "30px" : "40px"}
 
-                                    bgColor="#FFDFDF"
+                                    bgColor={isLightMode ? "#FFDFDF" : "#77002E"}
                                     borderRadius="5px"
 
                                     justifyContent="center"
@@ -212,13 +226,13 @@ export default function Schedule() {
                                     cursor="pointer"
 
                                     _hover={{
-                                        bgColor: "#FFCACA",
+                                        bgColor: isLightMode ? "#FFCACA" : "#49001b",
                                     }}
 
                                     onClick={rmSelectedTrip}
                                 >
                                     <Text
-                                        color="#F06E6E"
+                                        color={isLightMode ? "#F06E6E" : ""}
                                         fontSize={isMobile ? "13px" : "16px"}
                                     >
                                         선택 삭제
@@ -259,6 +273,7 @@ export default function Schedule() {
                                                 setTripListCount(Number(e.target.value));
                                             }}
                                             fontSize={isMobile ? "13px" : "20px"}
+                                            color={isLightMode ? "#213547" : "#dddddd"}
                                         >
                                             {
                                                 tripListPageSizeList.map((count) => (
@@ -298,10 +313,10 @@ export default function Schedule() {
                                 <Table.Header>
                                     <Table.Row
                                         h={isMobile ? "40px" : "80px"}
-                                        bgColor="#EFEFEF"
+                                        bgColor={isLightMode ? "#EFEFEF" : "#2d2d2d"}
                                         fontSize={isMobile ? "13px" : "17px"}
                                     >
-                                        <Table.ColumnHeader w="6" pl={isMobile ? "20px" : "40px"}>
+                                        <Table.ColumnHeader w="6" pl={isMobile ? "20px" : "40px"} borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}>
                                             <Checkbox.Root
                                                 size="sm"
                                                 top="0.5"
@@ -318,14 +333,36 @@ export default function Schedule() {
                                             </Checkbox.Root>
                                         </Table.ColumnHeader>
                                             
-                                        <Table.ColumnHeader>여행지</Table.ColumnHeader>
-                                        <Table.ColumnHeader>취향 태그</Table.ColumnHeader>
-                                        <Table.ColumnHeader textAlign="end">시작 날짜</Table.ColumnHeader>
-                                        <Table.ColumnHeader textAlign="end" pr={isMobile ? "" : "40px"}>끝 날짜</Table.ColumnHeader>
+                                        <Table.ColumnHeader 
+                                            borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+                                            color={isLightMode ? "#213547" : "#dddddd"}
+                                        >
+                                            여행지
+                                        </Table.ColumnHeader>
+                                        <Table.ColumnHeader 
+                                            borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+                                            color={isLightMode ? "#213547" : "#dddddd"}
+                                        >
+                                            취향 태그
+                                        </Table.ColumnHeader>
+                                        <Table.ColumnHeader 
+                                            borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+                                            color={isLightMode ? "#213547" : "#dddddd"} textAlign="end"
+                                        >
+                                            시작 날짜
+                                        </Table.ColumnHeader>
+                                        <Table.ColumnHeader 
+                                            borderBottom={isLightMode ? "1px solid #e4e4e7" : "1px solid #444444"}
+                                            color={isLightMode ? "#213547" : "#dddddd"} textAlign="end" pr={isMobile ? "" : "40px"}
+                                        >
+                                            끝 날짜
+                                        </Table.ColumnHeader>
                                     </Table.Row>
                                 </Table.Header>
+
                                 {/* 메인 데이터 공간 */}
                                 <Table.Body>{rows}</Table.Body>
+
                             </Table.Root>
                         </Table.ScrollArea>
                                             
@@ -352,7 +389,7 @@ export default function Schedule() {
                                         }}
                                     >
                                         <LuChevronLeft
-                                            color="#696969"
+                                            color={textColor}
                                         />
                                     </IconButton>
                                 </Pagination.PrevTrigger>
@@ -361,10 +398,12 @@ export default function Schedule() {
                                     render={(page) => (
                                         <IconButton
                                             variant={{ base: "ghost" }}
-                                            color="#696969"
+                                            color={textColor}
                                             outline="none"
-                                            border={page.value !== nowPage ? "1px solid #E0E7EE" : "0"}
-                                            bgColor={page.value === nowPage ? "#E0E7EE" : "transparent"}
+                                            border={page.value !== nowPage ?
+                                                isLightMode ? "1px solid #E0E7EE" : "1px solid #3c3c3c" : "0"}
+                                            bgColor={page.value === nowPage ? 
+                                                isLightMode ? "#E0E7EE" : "#3c3c3c" : "transparent"}
                                             _focus={{
                                                 border: "0",
                                                 outline: "none",
@@ -389,7 +428,7 @@ export default function Schedule() {
                                         }}
                                     >
                                         <LuChevronRight
-                                            color="#696969"
+                                            color={textColor}
                                         />
                                     </IconButton>
                                 </Pagination.NextTrigger>

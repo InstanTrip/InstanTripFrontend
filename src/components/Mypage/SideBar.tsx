@@ -1,17 +1,22 @@
 import { Box, Flex, Image, Link, Text, useBreakpointValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 import { logout } from "@/utils/Api";
 
 import RippleButton from "../Misc/RippleButton";
 import task_list_icon from "../../assets/task_list_icon.svg";
+import task_list_icon_for_darkmode from "../../assets/task_list_icon_for_darkmode.svg";
 import setting_icon from "../../assets/setting_icon.svg";
-import logout_icom from "../../assets/logout_icon.svg";
+import setting_icon_darkmode from "../../assets/setting_icon_for_darkmode.svg";
+import logout_icon from "../../assets/logout_icon.svg";
+import logout_icon_darkmode from "../../assets/logout_icon_for_darkmode.svg";
 import InstantripLogo from "../../assets/instantrip.webp";
 
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
     const isMobile = useBreakpointValue({ base: true, md: false }) as boolean;
     const sideBarWidth = useBreakpointValue({ base: "50px", md: "270px" });
 
+    const isLightMode = useColorModeValue(true, false);
 
     const handleLogout = () => {
         logout();
@@ -23,7 +28,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
         <Flex
             h="100%"
             w={sideBarWidth}
-            borderRight="1px solid #DADADA"
+            borderRight={`1px solid ${isLightMode ? "#DADADA" : "#2d2d2d"}`}
             py="40px"
             direction="column"
             transition="all 0.2s ease-in-out"
@@ -32,7 +37,7 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                 <Link
                     fontSize="35px"
                     fontWeight="lighter"
-                    color="#757575"
+                    color={isLightMode ? "#757575" : "#efefef"}
                     outline="none"
                     _hover={{
                         fontWeight: "lighter",
@@ -70,7 +75,9 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                         <Flex
                             w={isMobile ? "40px" : "190px"}
                             h={isMobile ? "40px" : "57px"}
-                            bgColor={page === "schedule" ? "#E9ECF0" : ""}
+                            bgColor={page === "schedule" ? 
+                                isLightMode ? "#E9ECF0" : "#2d2d2d"
+                                 : ""}
                             alignItems="center"
                             justifyContent={isMobile ? "center" : "flex-start"}
                             pl={isMobile ? "" : "20px"}
@@ -78,17 +85,17 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                             transition="all 0.2s ease-in-out"
                             cursor="pointer"
                             _hover={{
-                                backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                backgroundColor: isLightMode ? "#f0f0f0" : "#2d2d2d",
                             }}
                             onClick={() => setPage("schedule")}
-                            >
+                        >
                             <Image
                                 w="16px"
                                 h="16px"
-                                src={task_list_icon}
+                                src={isLightMode ? task_list_icon : task_list_icon_for_darkmode}
                             />
                             <Text
-                                color="#696969"
+                                color={isLightMode ? "#696969" : "#efefef"}
                                 display={isMobile ? "none" : "block"}
                             >
                                 일정 관리
@@ -110,7 +117,9 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                         <Flex
                             w={isMobile ? "40px" : "190px"}
                             h={isMobile ? "40px" : "57px"}
-                            bgColor={page === "user_info_edit" ? "#E9ECF0" : ""}
+                            bgColor={page === "user_info_edit" ? 
+                                isLightMode ? "#E9ECF0" : "#2d2d2d"
+                                 : ""}
                             alignItems="center"
                             justifyContent={isMobile ? "center" : "flex-start"}
                             pl={isMobile ? "" : "20px"}
@@ -118,17 +127,17 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                             transition="all 0.2s ease-in-out"
                             cursor="pointer"
                             _hover={{
-                                backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                backgroundColor: isLightMode ? "#f0f0f0" : "#2d2d2d",
                             }}
                             onClick={() => setPage("user_info_edit")}
                         >
                             <Image
                                 w="16px"
                                 h="16px"
-                                src={setting_icon}
+                                src={isLightMode ? setting_icon : setting_icon_darkmode}
                             />
                             <Text
-                                color="#696969"
+                                color={isLightMode ? "#696969" : "#efefef"}
                                 display={isMobile ? "none" : "block"}
                             >
                                 회원정보 변경
@@ -165,19 +174,19 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                     alignItems="center"
                                     gap="3px"
                                     _hover={{
-                                        backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                        backgroundColor: isLightMode ? "#f0f0f0" : "#2d2d2d",
                                     }}
                                     transition="all 0.2s ease-in-out"
                                     cursor="pointer"
                                     onClick={handleLogout}
                                 >
                                     <Image
-                                        src={logout_icom}
+                                        src={isLightMode ? logout_icon : logout_icon_darkmode}
                                         w="20px"
                                         h="20px"
                                     />
                                     <Text
-                                        color="#696969"
+                                        color={isLightMode ? "#696969" : "#efefef"}
                                         display={isMobile ? "none" : "block"}
                                     >
                                         로그아웃

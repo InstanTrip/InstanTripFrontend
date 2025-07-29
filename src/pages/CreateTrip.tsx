@@ -3,6 +3,7 @@ import { GridLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Flex, Text, useBreakpointValue } from '@chakra-ui/react';
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 import { getUserData } from '@/utils/Api';
 import { fetchCreateTrip } from '@/utils/Api';
@@ -43,6 +44,7 @@ export default function CreateTrip() {
 
     const navigate = useNavigate();
 
+    const isLightMode = useColorModeValue(true, false);
 
 
     // 리엑트 쿼리로 로그인 상태 가져오기
@@ -135,7 +137,7 @@ export default function CreateTrip() {
         <Flex
             w="100vw"
             h="100vh"
-            backgroundColor="#F4F4F4"
+            // backgroundColor="#F4F4F4"
             direction="column"
             alignItems="center"
         >
@@ -169,15 +171,15 @@ export default function CreateTrip() {
                 <StatusBar count={page} setPage={setPage} />
                 {
                     page === 1 ? (
-                        <Text color="#575757" mt="30px" fontSize="20px">
+                        <Text color={isLightMode ? "#575757" : "#dddddd"} mt="30px" fontSize="20px">
                             여행 기간 선택
                         </Text>
                     ) : page === 2 ? (
-                        <Text color="#575757" mt="30px" fontSize="20px">
+                        <Text color={isLightMode ? "#575757" : "#dddddd"} mt="30px" fontSize="20px">
                             떠나고 싶은 지역
                         </Text>
                     ) : (
-                        <Text color="#575757" mt="30px" fontSize="20px">
+                        <Text color={isLightMode ? "#575757" : "#dddddd"} mt="30px" fontSize="20px">
                             취향 선택
                         </Text>
                     )
@@ -229,8 +231,8 @@ export default function CreateTrip() {
             {page < 3 && (
                 <Button
                     fontSize="20px"
-                    backgroundColor="#F4F4F4"
-                    color="#575757"
+                    backgroundColor="transparent"
+                    color={isLightMode ? "#575757" : "#dddddd"}
                     onClick={handleNextPage}
                     mb="30px"
                     outline="none"
@@ -249,8 +251,8 @@ export default function CreateTrip() {
             {page === 3 && (
                 <Button
                     fontSize="20px"
-                    backgroundColor="#F4F4F4"
-                    color="#575757"
+                    backgroundColor="transparent"
+                    color={isLightMode ? "#575757" : "#dddddd"}
                     onClick={() => {createTrip()}}
                     mb="30px"
                     outline="none"

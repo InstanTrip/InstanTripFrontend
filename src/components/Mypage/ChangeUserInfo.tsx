@@ -1,13 +1,17 @@
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Flex, Grid, GridItem, Box, Text, Input, Button, Alert, useBreakpointValue } from '@chakra-ui/react';
+import { useColorModeValue } from "@/components/ui/color-mode"
 import { AxiosResponse } from 'axios';
 
 import { changeNickname } from '@/utils/Api';
 
 export default function ChangeUserInfo({ userEmail, userName, refetchNickname }: { userEmail: string, userName: string, refetchNickname: () => void }) {
     const navigate = useNavigate();
+
+    const isLightMode = useColorModeValue(true, false);
+    const textColor = useColorModeValue("#696969", "#dddddd");
 
     // 사용자 닉네임
     const [name, setUserName] = useState(userName);
@@ -67,13 +71,13 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
             >
                 <Text
                     fontSize={titleFontSize}
-                    color="#9B9B9B"
+                    color={isLightMode ? "#9B9B9B" : "#dddddd"}
                 >
                     회원정보 변경
                 </Text>
 
                 <Grid
-                    border="1px solid #BCBCBC"
+                    border={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                     borderBottom="none"
                     templateColumns="repeat(5, 1fr)"
 
@@ -81,9 +85,9 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                 >
 
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         h={gridItemHeight}
-                        bgColor="#E7E7E7"
+                        bgColor={isLightMode ? "#E7E7E7" : "#2d2d2d"}
                     >
                         <Flex
                             w="100%"
@@ -94,14 +98,14 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                         >
                             <Text
                                 fontSize={gridTitleFontSize}
-                                color="#6D6767"
+                                color={isLightMode ? "#6D6767" : "#dddddd"}
                             >
                                 EMAIL
                             </Text>
                         </Flex>
                     </GridItem>
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         colSpan={4}
                     >
                         <Flex
@@ -120,9 +124,9 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                     </GridItem>
 
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         h={gridItemHeight}
-                        bgColor="#E7E7E7"
+                        bgColor={isLightMode ? "#E7E7E7" : "#2d2d2d"}
                     >
                         <Flex
                             w="100%"
@@ -133,7 +137,7 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                         >
                             <Text
                                 fontSize={gridTitleFontSize}
-                                color="#6D6767"
+                                color={isLightMode ? "#6D6767" : "#dddddd"}
 
                                 textAlign="center"
                             >
@@ -142,7 +146,7 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                         </Flex>
                     </GridItem>
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         colSpan={4}
                     >
                         <Flex
@@ -155,13 +159,13 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                             justifyContent="center"
                         >
                             <Button
-                                bgColor="#93E2FF"
+                                bgColor={isLightMode ? "#93E2FF" : "#4682B4"}
 
                                 outline="none"
                                 border="none"
 
                                 _hover={{
-                                    bgColor: "#81D4F2"
+                                    bgColor: isLightMode ? "#7CC4E5" : "#3b709b",
                                 }}
                                 _focus={{
                                     outline: "none"
@@ -181,9 +185,9 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                     </GridItem>
 
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         h={gridItemHeight}
-                        bgColor="#E7E7E7"
+                        bgColor={isLightMode ? "#E7E7E7" : "#2d2d2d"}
                     >
                         <Flex
                             w="100%"
@@ -194,14 +198,14 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                         >
                             <Text
                                 fontSize={gridTitleFontSize}
-                                color="#6D6767"
+                                color={isLightMode ? "#6D6767" : "#dddddd"}
                             >
                                 닉네임
                             </Text>
                         </Flex>
                     </GridItem>
                     <GridItem
-                        borderBottom="1px solid #BCBCBC"
+                        borderBottom={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                         colSpan={4}
                     >
                         <Flex
@@ -224,17 +228,17 @@ export default function ChangeUserInfo({ userEmail, userName, refetchNickname }:
                                     placeholder="닉네임을 입력하세요"
                                     value={name}
                                     onChange={(e) => setUserName(e.target.value)}
-                                    border="1px solid #BCBCBC"
+                                    border={isLightMode ? "1px solid #BCBCBC" : "1px solid #2d2d2d"}
                                     borderRadius="10px"
                                     w="100%"
                                 />
                                 <Button
-                                    bgColor="#93E2FF"
+                                    bgColor={isLightMode ? "#93E2FF" : "#4682B4"}
                                     outline="none"
                                     border="none"
 
                                     _hover={{
-                                        bgColor: "#81D4F2"
+                                        bgColor: isLightMode ? "#7CC4E5" : "#3b709b",
                                     }}
                                     _focus={{
                                         outline: "none"

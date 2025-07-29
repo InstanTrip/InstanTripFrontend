@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 import MapBox from "@/components/Map/MapBox";
 
@@ -16,7 +17,9 @@ import { NicknameToHexColor } from "@/utils/NicknameToHexColor";
 
 import Call from "@/assets/call.svg";
 import Close from "@/assets/close.svg";
+import CloseDarkmode from "@/assets/close_for_darkmode.svg";
 import Loop from "@/assets/icon_loop.svg";
+import LoopDarkmode from "@/assets/icon_loop_for_darkmode.svg";
 import EarthImg from "@/assets/earth.svg";
 import TriangleArrow from "@/assets/triangle_arrow.svg";
 import InstanTripOriginLogo from "@/assets/instantrip_origin.webp";
@@ -53,6 +56,10 @@ interface SearchResult {
 
 export default function AboutTrip() {
     const navigate = useNavigate();
+
+    const isLightMode = useColorModeValue(true, false);
+    const textColor = useColorModeValue("#696969", "#dddddd");
+    const backgroundColor = useColorModeValue("#F4F4F4", "#242424");
 
     // 웹소켓으로 받아온 데이터
     const [ locationNodes, setLocationNodes ] = useState<Nodes[]>([]);
@@ -483,7 +490,7 @@ export default function AboutTrip() {
                             width: changeLocModalWidth,
                             height: changeLocModalHeight,
                             marginRight: '-50%',
-                            background: "#F4F4F4",
+                            background: backgroundColor,
                             border: "none",
                             borderRadius: "25px",
                             transform: 'translate(-50%, -50%)',
@@ -505,7 +512,7 @@ export default function AboutTrip() {
                     >
                         <Text
                             fontSize={changeLocModalTitle}
-                            color="#5A5A5A"
+                            color={textColor}
                         >
                             {
                                 locationNodesForPage && locationNodesForPage[dateIndex] && locationNodesForPage[dateIndex][selectIndex].title &&
@@ -513,7 +520,7 @@ export default function AboutTrip() {
                             }
                         </Text>
                         <Image
-                            src={Close}
+                            src={isLightMode ? Close : CloseDarkmode}
                             alt="close"
                             onClick={closeModal}
                             cursor="pointer"
@@ -692,7 +699,7 @@ export default function AboutTrip() {
                             width: changeLocModalWidth,
                             height: changeLocModalHeight,
                             marginRight: '-50%',
-                            background: "#F4F4F4",
+                            background: backgroundColor,
                             border: "none",
                             borderRadius: "25px",
                             transform: 'translate(-50%, -50%)',
@@ -713,12 +720,12 @@ export default function AboutTrip() {
                     >
                         <Text
                             fontSize={changeLocModalTitle}
-                            color="#5A5A5A"
+                            color={textColor}
                         >
                             교체할 장소를 선택하세요
                         </Text>
                         <Image
-                            src={Close}
+                            src={isLightMode ? Close : CloseDarkmode}
                             alt="close"
                             onClick={closeModal}
                             cursor="pointer"
@@ -752,7 +759,7 @@ export default function AboutTrip() {
                         mt="20px"
                     >
                         <Box
-                            bg='#EEEEEE'
+                            bg={isLightMode ? '#EEEEEE' : '#2d2d2d'}
                             w="100%"
                             h="100%"
 
@@ -795,7 +802,7 @@ export default function AboutTrip() {
 
                                                     flexDirection="column"
                                                 >
-                                                    <Text fontSize="17px" color="#727272">
+                                                    <Text fontSize="17px" color={textColor}>
                                                         {location.title}
                                                     </Text>
                                                     <Text fontSize="12px" color="#B3B3B3">
@@ -810,7 +817,7 @@ export default function AboutTrip() {
                                                     
                                             >
                                                 <Image
-                                                    src={Loop}
+                                                    src={isLightMode ? Loop : LoopDarkmode}
                                                     alt="loop"
                                                 />
                                             </Flex>
@@ -857,7 +864,7 @@ export default function AboutTrip() {
                             width: shareModalWidth,
                             height: shareModalHeight,
                             marginRight: '-50%',
-                            background: "#F4F4F4",
+                            background: backgroundColor,
                             border: "none",
                             borderRadius: "25px",
                             transform: 'translate(-50%, -50%)',
@@ -880,13 +887,13 @@ export default function AboutTrip() {
                     >
                         <Text
                             fontSize={shareModalTitle}
-                            color="#575757"
+                            color={textColor}
                         >
                             엑세스 권한이 있는 사용자
                         </Text>
 
                         <Image
-                            src={Close}
+                            src={isLightMode ? Close : CloseDarkmode}
                             alt="close"
                             onClick={closeModal}
                             cursor="pointer"
@@ -939,7 +946,7 @@ export default function AboutTrip() {
                                 >
                                     <Text
                                         fontSize={isMobile ? "14px" : "16px"}
-                                        color="#575757"
+                                        color={textColor}
                                         fontWeight="bold"
                                     >
                                         {user.name}
@@ -956,14 +963,14 @@ export default function AboutTrip() {
                     >
                         <Text
                             fontSize={shareModalTitle}
-                            color="#575757"
+                            color={textColor}
                         >
                             공유
                         </Text>
                         <Flex
                             ml={isMobile ? "10px" : "20px"}
 
-                            border="1px solid #DEDEDE"
+                            border={isLightMode ? "1px solid #DEDEDE" : "1px solid #3b3b3b"}
 
                             alignItems="center"
                             px="9px"
@@ -973,7 +980,7 @@ export default function AboutTrip() {
                         >
                             <Text
                                 fontSize="16px"
-                                color="blue"
+                                color={isLightMode ? "blue" : "blue.300"}
                             >
                                 https://instantrip.ajb.kr/invite?code={inviteCode}
                             </Text>
@@ -991,10 +998,11 @@ export default function AboutTrip() {
                 flexDirection="column"
                 float="left"
 
-                bg="#F4F4F4"
                 zIndex={1}
 
                 left={leftSlideLeft}
+
+                backgroundColor={backgroundColor}
 
                 transition="0.3s all ease-in-out"
             >
@@ -1007,7 +1015,7 @@ export default function AboutTrip() {
                 >
                     <Link
                         fontSize={logoFontSize}
-                        color="#585858"
+                        color={textColor}
 
                         outline="none"
                         textDecoration="none"
@@ -1015,7 +1023,7 @@ export default function AboutTrip() {
 
                         _hover={{
                             textDecoration: "none",
-                            color: "#585858",
+                            color: textColor,
                         }}
                     >
                         InstanTrip
@@ -1029,7 +1037,7 @@ export default function AboutTrip() {
                         h={isMobile ? "35px" : "50px"}
 
                         color="white"
-                        bg="#93E2FF"
+                        bg={isLightMode ? "#93E2FF" : "#4682B4"}
 
                         borderRadius="25px"
 
@@ -1037,7 +1045,7 @@ export default function AboutTrip() {
                         transition="0.3s all ease-in-out"
 
                         _hover={{
-                            backgroundColor: "#7CC4E5",
+                            backgroundColor: isLightMode ? "#7CC4E5" : "#3b709b",
                         }}
 
                         onClick={() => setAccessModalIsOpen(true)}
@@ -1062,7 +1070,7 @@ export default function AboutTrip() {
                     gap="5px"
                 >
                     <Text
-                        color="#585858"
+                        color={textColor}
 
                         onClick={dayDown}
 
@@ -1072,12 +1080,12 @@ export default function AboutTrip() {
                         ⏴
                     </Text>
                     <Text
-                        color="#585858"
+                        color={textColor}
                     >
                         {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일
                     </Text>
                     <Text
-                        color="#585858"
+                        color={textColor}
 
                         onClick={dayUp}
 
@@ -1171,7 +1179,7 @@ export default function AboutTrip() {
 
                                                             gap="3px"
                                                         >
-                                                            <Text fontSize="17px" color="#606060">
+                                                            <Text fontSize="17px" color={textColor}>
                                                                 {location.title}
 
                                                             </Text>
@@ -1202,20 +1210,20 @@ export default function AboutTrip() {
                                                 <Flex
                                                     justifyContent="center"
                                                     alignItems="center"
-                                                    border="1px solid #E9E9E9"
+                                                    border={isLightMode ? "1px solid #E9E9E9" : "1px solid #2d2d2d"}
                                                     borderRadius="15px"
                                                     w="80px"
                                                     h="35px"
                                                     cursor="pointer"
                                                     transition="0.3s all ease-in-out"
                                                     _hover={{
-                                                        backgroundColor: "#E9E9E9",
+                                                        backgroundColor: isLightMode ? "#E9E9E9" : "#2d2d2d",
                                                     }}
                                                 
                                                     onClick={() => changeLocation(index)}
                                                 >
                                                     <Text
-                                                        color="#696969"
+                                                        color={textColor}
                                                     >
                                                         교체
                                                     </Text>
@@ -1257,7 +1265,7 @@ export default function AboutTrip() {
                 justifyContent="center"
                 alignItems="center"
 
-                bg="#93E2FF"
+                bg={isLightMode ? "#93E2FF" : "#4682B4"}
                 borderRadius="50%"
 
                 zIndex={2}

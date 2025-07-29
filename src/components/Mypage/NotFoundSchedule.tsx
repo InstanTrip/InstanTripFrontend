@@ -1,8 +1,13 @@
 import { Flex, Text, Image, useBreakpointValue } from "@chakra-ui/react";
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 import warning from "../../assets/warning.svg";
+import warning_darkmode from "../../assets/warning_for_darkmode.svg";
 
 export default function NotFoundSchedule() {
+    const isLightMode = useColorModeValue(true, false);
+    const textColor = useColorModeValue("#B1B1B1", "#dddddd");
+
     const warningFontSize = useBreakpointValue({ base: "17px", md: "30px" });
     const warningIconSize = useBreakpointValue({ base: "17px", md: "30px" });
 
@@ -16,10 +21,10 @@ export default function NotFoundSchedule() {
 
             gap="12px"
         >
-            <Image w={warningIconSize} src={warning} alt="warning" />
+            <Image w={warningIconSize} src={isLightMode ? warning : warning_darkmode} alt="warning" />
             <Text
                 fontSize={warningFontSize}
-                color="#B1B1B1"
+                color={textColor}
             >
                 여행 계획이 없습니다
             </Text>
