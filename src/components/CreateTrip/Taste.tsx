@@ -6,6 +6,7 @@ import {
     Button,
     useBreakpointValue,
 } from "@chakra-ui/react";
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 export default function Taste({
     destinationTaste,
@@ -22,6 +23,7 @@ export default function Taste({
     accommodationTaste: string[],
     setAccommodationTaste: React.Dispatch<React.SetStateAction<string[]>>
 }) {
+    const isLightMode = useColorModeValue(true, false);
     
     // 입력 필드 상태 관리
     const [destinationInput, setDestinationInput] = useState("");
@@ -132,7 +134,7 @@ export default function Taste({
                     direction="column"
                 >
                     <Text
-                        color="#575757"
+                        color={isLightMode ? "#575757" : "#ddd"}
                         fontSize="20px"
                     >
                         여행지 취향
@@ -146,23 +148,24 @@ export default function Taste({
                             onKeyDown={(e) => handleKeyDown(e, destinationInput, setDestinationInput, destinationTaste, setDestinationTaste)}
                             placeholder="Ex) 바다, 산, 인스타"
 
-                            border="1px solid rgb(207, 207, 207)"
+                            border={isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d"}
 
                             _focus={{
-                                border: "1px solid rgb(207, 207, 207)",
+                                border: isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d",
                                 outline: "none",
                             }}
                         />
                         <Button 
                             onClick={() => addTag(destinationInput, setDestinationInput, destinationTaste, setDestinationTaste)}
-                            bg="#E9ECF0"
+                            bg={isLightMode ? "#E9ECF0" : "#2d2d2d"}
+                            color={isLightMode ? "#575757" : "#dddddd"}
 
                             transition="all 0.2s ease-in-out"
                             outline="none"
                             border="none"
 
                             _hover={{
-                                bg: "#93E2FF",
+                                bg: isLightMode ? "#93E2FF" : "#4682B4",
                                 color: "white",
                             }}
                             _focus={{
@@ -182,7 +185,7 @@ export default function Taste({
                     direction="column"
                 >
                     <Text
-                        color="#575757"
+                        color={isLightMode ? "#575757" : "#ddd"}
                         fontSize="20px"
                     >
                         음식 취향
@@ -196,23 +199,24 @@ export default function Taste({
                             onKeyDown={(e) => handleKeyDown(e, foodInput, setFoodInput, foodTaste, setFoodTaste)}
                             placeholder="Ex) 치킨, 한식, 달콤한, 전통음식"
                             
-                            border="1px solid rgb(207, 207, 207)"
+                            border={isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d"}
 
                             _focus={{
-                                border: "1px solid rgb(207, 207, 207)",
+                                border: isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d",
                                 outline: "none",
                             }}
                         />
                         <Button 
                             onClick={() => addTag(foodInput, setFoodInput, foodTaste, setFoodTaste)}
-                            bg="#E9ECF0"
+                            bg={isLightMode ? "#E9ECF0" : "#2d2d2d"}
+                            color={isLightMode ? "#575757" : "#dddddd"}
 
                             transition="all 0.2s ease-in-out"
                             outline="none"
                             border="none"
 
                             _hover={{
-                                bg: "#93E2FF",
+                                bg: isLightMode ? "#93E2FF" : "#4682B4",
                                 color: "white",
                             }}
                             _focus={{
@@ -232,7 +236,7 @@ export default function Taste({
                     direction="column"
                 >
                     <Text
-                        color="#575757"
+                        color={isLightMode ? "#575757" : "#ddd"}
                         fontSize="20px"
                     >
                         숙소 취향
@@ -246,23 +250,24 @@ export default function Taste({
                             onKeyDown={(e) => handleKeyDown(e, accommodationInput, setAccommodationInput, accommodationTaste, setAccommodationTaste)}
                             placeholder="Ex) 편안한, 호텔, 리조트"
                             
-                            border="1px solid rgb(207, 207, 207)"
+                            border={isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d"}
 
                             _focus={{
-                                border: "1px solid rgb(207, 207, 207)",
+                                border: isLightMode ? "1px solid rgb(207, 207, 207)" : "1px solid #2d2d2d",
                                 outline: "none",
                             }}
                         />
                         <Button
                             onClick={() => addTag(accommodationInput, setAccommodationInput, accommodationTaste, setAccommodationTaste)}
-                            bg="#E9ECF0"
+                            bg={isLightMode ? "#E9ECF0" : "#2d2d2d"}
+                            color={isLightMode ? "#575757" : "#dddddd"}
 
                             transition="all 0.2s ease-in-out"
                             outline="none"
                             border="none"
 
                             _hover={{
-                                bg: "#93E2FF",
+                                bg: isLightMode ? "#93E2FF" : "#4682B4",
                                 color: "white",
                             }}
                             _focus={{

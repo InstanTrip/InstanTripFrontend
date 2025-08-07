@@ -1,9 +1,12 @@
 import React from 'react';
 import { Flex, Button, Grid, Text, useBreakpointValue } from '@chakra-ui/react';
+import { useColorModeValue } from "@/components/ui/color-mode"
 
 import areas from '@/data/areas.json';
 
 export default function Area({ tripPeriod, selectedAreas, setSelectedAreas }: { tripPeriod: number, selectedAreas: string[], setSelectedAreas: React.Dispatch<React.SetStateAction<string[]>> }) {
+    const isLightMode = useColorModeValue(true, false);
+
     const handleSelectArea = (region: string, area: string) => {
         let ar = region + " " + area;
         if (region === "특별/광역시") {
@@ -54,8 +57,8 @@ export default function Area({ tripPeriod, selectedAreas, setSelectedAreas }: { 
                             <Button
                                 key={`${city}-${idx}`} // 중복된 도시명 방지
                                 onClick={() => handleSelectArea(region, city)}
-                                backgroundColor={isInclude(region, city) ? "#93E2FF" : "#E9ECF0"}
-                                color={isInclude(region, city) ? "white" : "#575757"}
+                                backgroundColor={isInclude(region, city) ? (isLightMode ? "#93E2FF" : "#4682B4") : (isLightMode ? "#E9ECF0" : "#2d2d2d")}
+                                color={isInclude(region, city) ? "#fff" : (isLightMode ? "#575757" : "#dddddd")}
                                 borderRadius="12px"
                                 width={itemWidth}
                                 fontSize={itemFontSize}
@@ -67,7 +70,7 @@ export default function Area({ tripPeriod, selectedAreas, setSelectedAreas }: { 
                                 py="16px"
 
                                 transition="all 0.2s ease-in-out"
-                                _hover={{ backgroundColor: "#93E2FF", color: "white", outline: "none" }}
+                                _hover={{ backgroundColor: (isLightMode ? "#93E2FF" : "#4682B4"), color: "#fff", outline: "none" }}
                                 _focus={{
                                     border: "none",
                                     outline: "none",

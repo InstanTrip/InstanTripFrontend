@@ -1,9 +1,13 @@
 import { Flex, Text, Image } from '@chakra-ui/react';
+import { useColorModeValue } from "@/components/ui/color-mode"
+
 import checkmark from '../../assets/checkmark.svg';
 
 export default function StatusBar({ count, setPage }: { count: number, setPage: React.Dispatch<React.SetStateAction<number>> }) {
     // 반복되는 스텝 컴포넌트를 위한 함수 생성
     const renderStep = (stepNumber: number) => {
+        const isLightMode = useColorModeValue(true, false);
+
         const isActive = count >= stepNumber;
         const isCompleted = count > stepNumber;
 
@@ -12,7 +16,7 @@ export default function StatusBar({ count, setPage }: { count: number, setPage: 
                 w="40px"
                 h="40px"
                 borderRadius="50%"
-                backgroundColor={isActive ? "#93E2FF" : "#D9D9D9"}
+                backgroundColor={isActive ? (isLightMode ? "#93E2FF" : "#4682B4") : (isLightMode ? "#D9D9D9" : "#2d2d2d")}
                 justifyContent="center"
                 alignItems="center"
 
@@ -47,7 +51,7 @@ export default function StatusBar({ count, setPage }: { count: number, setPage: 
 
     return (
         <Flex
-            w="216px"
+            w="250px"
             h="40px"
             justifyContent="space-between"
         >
