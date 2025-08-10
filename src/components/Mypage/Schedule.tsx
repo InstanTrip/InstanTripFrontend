@@ -172,7 +172,7 @@ export default function Schedule() {
             </Table.Row>
         )))
     }
-    , [items, selection, nowPage, tripListCount]);
+    , [items, selection, nowPage, tripListCount, isLightMode]);
 
 
     // 페이지 변경 시 선택된 여행 일정 초기화

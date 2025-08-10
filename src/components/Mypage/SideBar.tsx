@@ -10,6 +10,8 @@ import setting_icon from "../../assets/setting_icon.svg";
 import setting_icon_darkmode from "../../assets/setting_icon_for_darkmode.svg";
 import logout_icon from "../../assets/logout_icon.svg";
 import logout_icon_darkmode from "../../assets/logout_icon_for_darkmode.svg";
+import info_icon from "../../assets/Info.svg";
+import info_icon_darkmode from "../../assets/Info_for_darkmode.svg";
 import InstantripLogo from "../../assets/instantrip.webp";
 
 export default function SideBar({ page, setPage }: { page: string; setPage: (page: string) => void }) {
@@ -141,6 +143,48 @@ export default function SideBar({ page, setPage }: { page: string; setPage: (pag
                                 display={isMobile ? "none" : "block"}
                             >
                                 회원정보 변경
+                            </Text>
+                        </Flex>
+                    </RippleButton>
+                </Box>
+            </Flex>
+
+            <Flex
+                mt="18px"
+                justifyContent="center"
+            >
+                <Box
+                    overflow="hidden"
+                    rounded="13px"
+                >
+                    <RippleButton>
+                        <Flex
+                            w={isMobile ? "40px" : "190px"}
+                            h={isMobile ? "40px" : "57px"}
+                            bgColor={page === "service_info" ? 
+                                isLightMode ? "#E9ECF0" : "#2d2d2d"
+                                 : ""}
+                            alignItems="center"
+                            justifyContent={isMobile ? "center" : "flex-start"}
+                            pl={isMobile ? "" : "20px"}
+                            gap="10px"
+                            transition="all 0.2s ease-in-out"
+                            cursor="pointer"
+                            _hover={{
+                                backgroundColor: isLightMode ? "#f0f0f0" : "#2d2d2d",
+                            }}
+                            onClick={() => setPage("service_info")}
+                        >
+                            <Image
+                                w="16px"
+                                h="16px"
+                                src={isLightMode ? info_icon : info_icon_darkmode}
+                            />
+                            <Text
+                                color={isLightMode ? "#696969" : "#efefef"}
+                                display={isMobile ? "none" : "block"}
+                            >
+                                정보
                             </Text>
                         </Flex>
                     </RippleButton>

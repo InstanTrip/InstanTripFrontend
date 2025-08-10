@@ -8,9 +8,10 @@ import { getUserData, getNickname } from '@/utils/Api';
 import SideBar from '@/components/Mypage/SideBar';
 import Schedule from '@/components/Mypage/Schedule';
 import ChangeUserInfo from '@/components/Mypage/ChangeUserInfo';
+import ServiceInfo from '@/components/Mypage/ServiceInfo';
 
 export default function Mypage() {
-    const [page, setPage] = useState("schedule"); // schedule, user_info_edit
+    const [page, setPage] = useState("schedule"); // schedule, user_info_edit, service_info
     const navigate = useNavigate();
 
     const [ userEmail, setUserEmail ] = useState("");
@@ -23,7 +24,7 @@ export default function Mypage() {
     }
 
     useEffect(() => {
-        if (page !== "schedule" && page !== "user_info_edit") {
+        if (page !== "schedule" && page !== "user_info_edit" && page !== "service_info") {
             goTo404();
         }
     }, [page]);
@@ -97,6 +98,10 @@ export default function Mypage() {
                                 userName={userName}
                                 refetchNickname={refetchNickname}
                             />
+                        </Box>
+                    ) : page === "service_info" ? (
+                        <Box>
+                            <ServiceInfo />
                         </Box>
                     ) : (
                         null
