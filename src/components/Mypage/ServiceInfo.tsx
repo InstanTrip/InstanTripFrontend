@@ -6,6 +6,8 @@ export default function ServiceInfo() {
     return (
         <Box
             p="30px"
+            h="100vh"
+            overflow="scroll"
         >
             <Text
                 fontSize="24px"
