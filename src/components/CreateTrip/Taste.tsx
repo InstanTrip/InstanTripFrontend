@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
     Flex,
     Text,
@@ -7,6 +7,7 @@ import {
     useBreakpointValue,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode"
+import debounce from "lodash/debounce"; // debounce 함수 임포트
 
 export default function Taste({
     destinationTaste,
@@ -52,6 +53,21 @@ export default function Taste({
         setTags(tags.filter((_, i) => i !== index));
     };
     
+    const debouncedAddTag = useCallback(
+        debounce(
+            (
+                input: string,
+                setInput: React.Dispatch<React.SetStateAction<string>>,
+                tags: string[],
+                setTags: React.Dispatch<React.SetStateAction<string[]>>
+            ) => {
+                addTag(input, setInput, tags, setTags);
+            },
+            300 // 300ms 지연
+        ), []
+    );
+
+
     // 키 입력 핸들러 (Enter 키 처리)
     const handleKeyDown = (
         e: React.KeyboardEvent,
@@ -62,7 +78,7 @@ export default function Taste({
     ) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            addTag(input, setInput, tags, setTags);
+            debouncedAddTag(input, setInput, tags, setTags);
         }
     };
 
@@ -98,6 +114,7 @@ export default function Taste({
                     borderRadius="full"
                     bg="rgba(255,255,255,0.3)"
                     _hover={{ bg: "rgba(255,255,255,0.5)" }}
+                    cursor="pointer"
                 >
                     <Text
                         fontSize="10px"

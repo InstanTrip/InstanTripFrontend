@@ -622,10 +622,8 @@ export default function AboutTrip() {
                                                 h="23px"
                                             />
                                         </Flex>
-                                        )
-                                        : null
-                                        
-                                    }
+                                    ) : null
+                                }
                             </Flex>
                         </Flex>
 
