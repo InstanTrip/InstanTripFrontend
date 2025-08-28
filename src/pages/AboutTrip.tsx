@@ -5,8 +5,9 @@ import useWebSocket from 'react-use-websocket';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Box, Flex, Text, Image, Input, Link, Alert, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Input, Link, Alert, Icon, useBreakpointValue } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode"
+import { RxTriangleLeft, RxTriangleRight } from "react-icons/rx";
 
 import MapBox from "@/components/Map/MapBox";
 
@@ -571,6 +572,7 @@ export default function AboutTrip() {
                             pr="10px"
                             py="5px"
                         >
+                            {/* 주소 */}
                             <Text
                                 color="#848484"
                             >
@@ -581,8 +583,9 @@ export default function AboutTrip() {
                                         locationNodesForPage[dateIndex].length > 0 &&
                                             locationNodesForPage[dateIndex][selectIndex].address
                                 }
+                                &nbsp;|&nbsp;지역사랑상품권 가맹점입니다.
                             </Text>
-                                
+
                             {/* 전화 */}
                             <Flex>
                                 {
@@ -626,7 +629,8 @@ export default function AboutTrip() {
                                 }
                             </Flex>
                         </Flex>
-
+                        
+                        {/* 블루리본 */}
                         {
                             locationNodesForPage &&
                             locationNodesForPage.length > 0 &&
@@ -1062,36 +1066,42 @@ export default function AboutTrip() {
                 <Flex
                     mt="40px"
                     justifyContent="center"
+                    alignItems="center"
 
                     fontSize={isMobile ? "25px" : "32px"}
 
                     gap="5px"
                 >
-                    <Text
+                    <Icon
+                        as={RxTriangleLeft}
+                        w="40px"
+                        h="40px"
+
                         color={textColor}
 
                         onClick={dayDown}
 
                         opacity={FormatDate(date) === FormatDate(minDate) ? 0.5 : 1}
                         cursor={FormatDate(date) === FormatDate(minDate) ? "not-allowed" : "pointer"}
-                    >
-                        ⏴
-                    </Text>
+
+                    />
                     <Text
                         color={textColor}
                     >
                         {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일
                     </Text>
-                    <Text
+                    <Icon
+                        as={RxTriangleRight}
+                        w="40px"
+                        h="40px"
+                        
                         color={textColor}
 
                         onClick={dayUp}
 
                         opacity={FormatDate(date) === FormatDate(maxDate) ? 0.5 : 1}
                         cursor={FormatDate(date) === FormatDate(maxDate) ? "not-allowed" : "pointer"}
-                    >
-                        ⏵
-                    </Text>
+                    />
                 </Flex>
 
                 <Flex

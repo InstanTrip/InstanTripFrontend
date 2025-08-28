@@ -37,7 +37,7 @@ export default function ServiceInfo() {
                 imageUrl="https://avatars.githubusercontent.com/u/70587328?v=4"
                 githubUrl="https://github.com/SeoBamm"
                 name="서범창"
-                email="20200561@kumoh.ac.kr"
+                email="spot3161@gmail.com"
                 description="백엔드 개발자"
             />
             <ProfileCard

@@ -1,10 +1,12 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from '@tanstack/react-query'
-import { Flex, Box, Text, Link, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, Box, Text, Link, Image, Icon, useBreakpointValue } from "@chakra-ui/react";
+import { IoMdArrowDropright } from "react-icons/io";
 
 import { getUserData, logout } from "@/utils/Api";
 
 import Background from "../assets/background.webp";
+import Advertisement from '@/advertisement/andongcity.jpg'
 
 export default function Main() {
     const [isLogin, setIsLogin] = useState(false); // 로그인 상태
@@ -194,7 +196,7 @@ export default function Main() {
                         >
                             당신의 여행을 더욱 편하게
                         </Text>
-                        <Box>
+                        <Flex alignItems="center">
                             <Link
                                 fontSize={subFontSize}
                                 color="white"
@@ -209,12 +211,25 @@ export default function Main() {
                             
                                 outline="none"
                             >
-                                여행 만들러 가기 ⏵
+                                여행 만들러 가기
                             </Link>
-                        </Box>
+                            <Icon size="2xl" as={IoMdArrowDropright} />
+                        </Flex>
                     </Flex>
                 </Flex>
             </Box>
+
+            {/* 하단 플로팅 광고 */}
+            {/* <Flex
+                pos="fixed"
+                bottom="20px"
+                left="50%"
+                transform="translateX(-50%)"
+                justifyContent="center"
+                w="300px"
+            >
+                <Image src={Advertisement} w="300px" />
+            </Flex> */}
         </Flex>
     );
 }
